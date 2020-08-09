@@ -1,0 +1,17 @@
+<mat-toolbar class="mb-3 mat-elevation-z6">
+  <mat-toolbar-row>
+    <button mat-icon-button aria-label="Menu button" id="ham" (click)="onToggleNavList()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Task Management</span>
+    <span class="toolbar-spacer"></span>
+    <span id="nav-links">
+      <button mat-button routerLink="/login">Log In</button>
+      <button mat-stroked-button routerLink="/register">Register</button>
+    </span>
+  </mat-toolbar-row>
+  <mat-toolbar-row id="ham-list" class="d-flex flex-column" *ngIf="isNavListOpened">
+    <button mat-button routerLink="/login" (click)="onToggleNavList()">Log In</button>
+    <button mat-button routerLink="/register" (click)="onToggleNavList()">Register</button>
+  </mat-toolbar-row>
+</mat-toolbar>

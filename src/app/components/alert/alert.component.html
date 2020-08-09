@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>{{ data?.title }}</h1>
+<div mat-dialog-content>
+  <p>{{ data?.message }}</p>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+  <button mat-button *ngFor="let button of data?.extraButtons" (click)="button?.handler()">{{ button?.text }}</button>
+  <button mat-button [mat-dialog-close]="null" cdkFocusInitial>Close</button>
+</div>
