@@ -23,6 +23,7 @@ import {environment} from '../environments/environment';
 import {MatDialogModule} from '@angular/material/dialog';
 import {AlertComponent} from './components/alert/alert.component';
 import {HasAnyAuthorityDirective} from './directives/has-any-authority/has-any-authority.directive';
+import {UserManagementComponent} from './components/admin/user-management/user-management.component';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -36,7 +37,8 @@ export function tokenGetter(): string {
     NavComponent,
     FooterComponent,
     AlertComponent,
-    HasAnyAuthorityDirective
+    HasAnyAuthorityDirective,
+    UserManagementComponent
   ],
   imports: [
     BrowserModule,
