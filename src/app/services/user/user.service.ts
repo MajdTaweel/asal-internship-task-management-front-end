@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {AuthService} from '../auth/auth.service';
-import {User} from '../../../models/user.model';
+import {Role, User} from '../../../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,23 @@ export class UserService {
 
   get currentUser(): Observable<User> {
     return this.user.asObservable();
+  }
+
+  getAuthenticationState(): Observable<Role[]> {
+    return this.currentUser.pipe(map(user => user.authorities));
+  }
+
+  hasAnyAuthority(authorities: string[] | string): boolean {
+    if (!this.user?.value?.authorities?.length) {
+      return false;
+    }
+
+    if (!Array.isArray(authorities)) {
+      authorities = [authorities];
+    }
+
+    const userAuthorities = this.user.value?.authorities?.map(authority => authority?.toString()) || [];
+    return userAuthorities.some(authority => authorities.includes(authority));
   }
 
   private retrieveUser(username: string): void {

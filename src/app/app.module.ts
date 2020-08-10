@@ -20,8 +20,9 @@ import {NavComponent} from './components/nav/nav.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../environments/environment';
-import {MatDialogModule} from "@angular/material/dialog";
-import { AlertComponent } from './components/alert/alert.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import {AlertComponent} from './components/alert/alert.component';
+import {HasAnyAuthorityDirective} from './directives/has-any-authority/has-any-authority.directive';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -34,7 +35,8 @@ export function tokenGetter(): string {
     RegisterComponent,
     NavComponent,
     FooterComponent,
-    AlertComponent
+    AlertComponent,
+    HasAnyAuthorityDirective
   ],
   imports: [
     BrowserModule,
