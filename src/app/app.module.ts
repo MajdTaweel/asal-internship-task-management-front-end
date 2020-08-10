@@ -24,6 +24,11 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {AlertComponent} from './components/alert/alert.component';
 import {HasAnyAuthorityDirective} from './directives/has-any-authority/has-any-authority.directive';
 import {UserManagementComponent} from './components/admin/user-management/user-management.component';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -62,6 +67,11 @@ export function tokenGetter(): string {
         allowedDomains: environment.allowedDomains,
       },
     }),
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatChipsModule,
+    MatSlideToggleModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

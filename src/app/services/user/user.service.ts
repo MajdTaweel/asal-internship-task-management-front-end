@@ -44,6 +44,10 @@ export class UserService {
     return userAuthorities.some(authority => authorities.includes(authority));
   }
 
+  getAllUsers(): Observable<User[]> {
+    return this.httpClient.get<User[]>(`${environment.apiURL}users`);
+  }
+
   private retrieveUser(username: string): void {
     if (this.authService.isAuthenticated()) {
       if (this.userSubscription) {

@@ -14,6 +14,10 @@ export class User {
   login: string;
 }
 
+export class UserWithFullName extends User {
+  fullName: string;
+}
+
 export enum Role {
   ADMIN = 'ROLE_ADMIN',
   USER = 'ROLE_USER',

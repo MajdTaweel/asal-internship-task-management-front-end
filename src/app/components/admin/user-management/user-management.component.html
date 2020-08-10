@@ -1,1 +1,57 @@
-<p>user-management works!</p>
+<div class="w-100 d-flex justify-content-center mt-4">
+  <h1>User Management</h1>
+</div>
+<div class="w-100 d-flex justify-content-center">
+  <div class="mat-elevation-z8">
+    <table [dataSource]="dataSource" mat-table matSort>
+
+      <!-- Username Column -->
+      <ng-container matColumnDef="login">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Username</th>
+        <td *matCellDef="let element" mat-cell>
+          <div class="d-flex align-items-center">
+            <mat-chip-avatar class="mr-1">
+              <img [src]="element.imageUrl" alt="Avatar">
+            </mat-chip-avatar>
+            <div>{{ element.login }}</div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="fullName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Full Name</th>
+        <td *matCellDef="let element" mat-cell>{{ element.firstName + ' ' + element.lastName }}</td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
+        <td *matCellDef="let element" mat-cell>{{ element.email }}</td>
+      </ng-container>
+
+      <!-- Activated Column -->
+      <ng-container matColumnDef="activated">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Activated</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-slide-toggle [(ngModel)]="element.activated"></mat-slide-toggle>
+        </td>
+      </ng-container>
+
+      <!-- Authorities Column -->
+      <ng-container matColumnDef="authorities">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Authorities</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-chip-list aria-label="Fish selection">
+            <mat-chip *ngFor="let authority of element.authorities" color="primary">{{ authority }}</mat-chip>
+          </mat-chip-list>
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
