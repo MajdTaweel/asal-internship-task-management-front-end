@@ -3,6 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from './components/login/login.component';
 import {RegisterComponent} from './components/register/register.component';
 import {UserManagementComponent} from './components/admin/user-management/user-management.component';
+import {AdminGuard} from './components/admin/admin.guard';
 
 
 const routes: Routes = [
@@ -21,6 +22,7 @@ const routes: Routes = [
   {
     path: 'admin/user-management',
     component: UserManagementComponent,
+    canActivate: [AdminGuard]
   },
   {
     path: '**',
