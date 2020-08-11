@@ -6,8 +6,7 @@
     <a class="text-dark text-decoration-none" routerLink="/">Task Management</a>
     <span class="toolbar-spacer"></span>
     <span id="nav-links">
-      <button *appHasAnyAuthority="'ROLE_ADMIN'" [matMenuTriggerFor]="menu" mat-button
-              routerLink="/login">Admin</button>
+      <button *appHasAnyAuthority="'ROLE_ADMIN'" [matMenuTriggerFor]="menu" mat-button>Admin</button>
       <mat-menu #menu="matMenu">
             <button mat-menu-item routerLink="/admin/user-management">User Management</button>
       </mat-menu>
