@@ -50,7 +50,8 @@ export class UserService {
 
   hasAnyAuthority(authorities: string[] | string): boolean {
     if (!this.user?.value?.authorities?.length) {
-      return false;
+      return (typeof authorities === 'string' && authorities === Role.ANONYMOUS)
+        || (Array.isArray(authorities) && authorities.length === 1 && authorities.includes(Role.ANONYMOUS));
     }
 
     if (!Array.isArray(authorities)) {
