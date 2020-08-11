@@ -45,7 +45,7 @@ export class UserService {
   }
 
   getAuthenticationState(): Observable<Role[]> {
-    return this.currentUser.pipe(map(user => user.authorities));
+    return this.currentUser.pipe(map(user => user?.authorities || []));
   }
 
   hasAnyAuthority(authorities: string[] | string): boolean {
