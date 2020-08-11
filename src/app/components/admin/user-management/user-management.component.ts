@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {UserWithFullName} from '../../../../models/user.model';
+import {Role, UserAlt} from '../../../../models/user.model';
 import {UserService} from '../../../services/user/user.service';
 import {Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
@@ -12,25 +12,32 @@ import {MatSort} from '@angular/material/sort';
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['login', 'fullName', 'email', 'activated', 'authorities'];
-  dataSource: MatTableDataSource<UserWithFullName>;
+  dataSource: MatTableDataSource<UserAlt>;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  private usersSubscription: Subscription;
+  private subscriptions = new Subscription();
 
   constructor(private userService: UserService) {
   }
 
   ngOnInit(): void {
-    this.usersSubscription = this.userService.getAllUsers().subscribe(users => {
-      this.dataSource = new MatTableDataSource(users.map(user => {
-        return {...user, fullName: `${user.firstName} ${user.lastName}`};
-      }));
+    const sub = this.userService.getAllUsers().subscribe(users => {
+      this.dataSource = new MatTableDataSource(users.map(user => new UserAlt(user)));
       this.dataSource.sort = this.sort;
     });
+    this.subscriptions.add(sub);
+  }
+
+  onUpdateUser(user: UserAlt): void {
+    const sub = this.userService.updateUser(user).subscribe(updatedUser => console.log('User updated', updatedUser));
+    this.subscriptions.add(sub);
+  }
+
+  onAddAuthority(user: UserAlt, authority: Role): void {
+    user.authorities.push(authority);
+    this.onUpdateUser(user);
   }
 
   ngOnDestroy(): void {
-    if (this.usersSubscription) {
-      this.usersSubscription.unsubscribe();
-    }
+    this.subscriptions.unsubscribe();
   }
 }

@@ -34,7 +34,7 @@
       <ng-container matColumnDef="activated">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Activated</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-slide-toggle [(ngModel)]="element.activated"></mat-slide-toggle>
+          <mat-slide-toggle (change)="onUpdateUser(element)" [(ngModel)]="element.activated"></mat-slide-toggle>
         </td>
       </ng-container>
 
@@ -42,9 +42,21 @@
       <ng-container matColumnDef="authorities">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Authorities</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-chip-list aria-label="Fish selection">
-            <mat-chip *ngFor="let authority of element.authorities" color="primary">{{ authority }}</mat-chip>
+          <mat-chip-list aria-label="Authorities">
+            <mat-chip (removed)="onUpdateUser(element)" *ngFor="let authority of element.authorities" [removable]="true"
+                      [selectable]="true">
+              {{ authority }}
+              <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
+            </mat-chip>
           </mat-chip-list>
+          <mat-chip [matMenuTriggerFor]="menu">add</mat-chip>
+          <mat-menu #menu="matMenu">
+            <button (click)="onAddAuthority(element, authority)"
+                    *ngFor="let authority of element.getMissingAuthorities()"
+                    mat-menu-item>
+              {{ authority }}
+            </button>
+          </mat-menu>
         </td>
       </ng-container>
 

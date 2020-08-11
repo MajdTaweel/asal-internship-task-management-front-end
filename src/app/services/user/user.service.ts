@@ -48,6 +48,10 @@ export class UserService {
     return this.httpClient.get<User[]>(`${environment.apiURL}users`);
   }
 
+  updateUser(user: User): Observable<User> {
+    return this.httpClient.put<User>(`${environment.apiURL}users`, user);
+  }
+
   private retrieveUser(username: string): void {
     if (this.authService.isAuthenticated()) {
       if (this.userSubscription) {

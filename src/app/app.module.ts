@@ -29,6 +29,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatMenuModule} from '@angular/material/menu';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -72,6 +73,7 @@ export function tokenGetter(): string {
     MatSortModule,
     MatChipsModule,
     MatSlideToggleModule,
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
