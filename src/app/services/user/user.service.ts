@@ -26,11 +26,13 @@ export class UserService {
         this.userSubscription = this.retrieveUser(username).subscribe(user => {
           if (!this.userDidInitialize) {
             this.userInitialized.next(user);
+            this.userDidInitialize = true;
           }
         });
       } else {
         if (!this.userDidInitialize) {
           this.userInitialized.next(null);
+          this.userDidInitialize = true;
         }
         if (this.userSubscription) {
           this.userSubscription.unsubscribe();
