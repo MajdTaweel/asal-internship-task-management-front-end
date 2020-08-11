@@ -49,7 +49,9 @@
               <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
             </mat-chip>
           </mat-chip-list>
-          <mat-chip [matMenuTriggerFor]="menu">add</mat-chip>
+          <mat-chip *ngIf="element.getMissingAuthorities()?.length" [matMenuTriggerFor]="menu">
+            <mat-icon>add</mat-icon>
+          </mat-chip>
           <mat-menu #menu="matMenu">
             <button (click)="onAddAuthority(element, authority)"
                     *ngFor="let authority of element.getMissingAuthorities()"
