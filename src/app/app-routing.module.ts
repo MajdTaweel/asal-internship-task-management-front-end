@@ -9,7 +9,8 @@ import {AdminGuard} from './components/admin/admin.guard';
 const routes: Routes = [
   {
     path: '',
-    component: LoginComponent,
+    pathMatch: 'full',
+    redirectTo: 'login',
   },
   {
     path: 'login',
