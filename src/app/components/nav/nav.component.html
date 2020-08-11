@@ -6,12 +6,22 @@
     <a class="text-dark text-decoration-none" routerLink="/">Task Management</a>
     <span class="toolbar-spacer"></span>
     <span id="nav-links">
-      <button mat-button routerLink="/login">Log In</button>
-      <button mat-stroked-button routerLink="/register">Register</button>
+      <button *appHasAnyAuthority="'ROLE_ADMIN'" [matMenuTriggerFor]="menu" mat-button
+              routerLink="/login">Admin</button>
+      <mat-menu #menu="matMenu">
+            <button mat-menu-item routerLink="/admin/user-management">User Management</button>
+      </mat-menu>
+      <button *appHasAnyAuthority="'ANONYMOUS'" mat-button routerLink="/login">Log In</button>
+      <button *appHasAnyAuthority="'ROLE_ANONYMOUS'" mat-stroked-button routerLink="/register">Register</button>
+      <button *appHasAnyAuthority="'ROLE_USER'" mat-stroked-button>Log Out</button>
     </span>
   </mat-toolbar-row>
   <mat-toolbar-row id="ham-list" class="d-flex flex-column" *ngIf="isNavListOpened">
-    <button mat-button routerLink="/login" (click)="onToggleNavList()">Log In</button>
-    <button mat-button routerLink="/register" (click)="onToggleNavList()">Register</button>
+    <button (click)="onToggleNavList()" *appHasAnyAuthority="'ROLE_ANONYMOUS'" mat-button routerLink="/login">Log In
+    </button>
+    <button (click)="onToggleNavList()" *appHasAnyAuthority="'ROLE_ANONYMOUS'" mat-button routerLink="/register">
+      Register
+    </button>
+    <button (click)="onToggleNavList()" *appHasAnyAuthority="'ROLE_USER'" mat-button>Log Out</button>
   </mat-toolbar-row>
 </mat-toolbar>
