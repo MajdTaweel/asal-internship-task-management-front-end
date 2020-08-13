@@ -22,7 +22,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     email: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
       [
         Validators.required,
@@ -32,7 +32,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     firstName: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
       [
         Validators.required,
@@ -43,7 +43,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     lastName: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
       [
         Validators.required,
@@ -54,7 +54,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     login: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
       [
         Validators.required,
@@ -66,13 +66,13 @@ export class UserEditComponent implements OnInit, OnDestroy {
     activated: new FormControl(
       {
         value: false,
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
     ),
     authorities: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
       [
         Validators.required,
@@ -81,7 +81,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     langKey: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
       [
         Validators.required,
@@ -90,7 +90,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     imageUrl: new FormControl(
       {
         value: '',
-        disabled: !this?.data?.isEdit,
+        disabled: !this.data?.isEdit,
       },
     ),
     createdBy: new FormControl(
