@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Role, User, UserAlt} from '../../../../models/user.model';
+import {Role, User, UserAlt} from '../../../models/user.model';
 import {UserService} from '../../../services/user/user.service';
 import {Observable, of, Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';

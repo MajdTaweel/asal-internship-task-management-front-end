@@ -4,7 +4,7 @@ import {BehaviorSubject, Observable, of, Subject, Subscription} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {map, tap} from 'rxjs/operators';
 import {AuthService} from '../auth/auth.service';
-import {Role, User} from '../../../models/user.model';
+import {Role, User} from '../../models/user.model';
 
 function getCurrentUsername(): string {
   return localStorage.getItem('username');

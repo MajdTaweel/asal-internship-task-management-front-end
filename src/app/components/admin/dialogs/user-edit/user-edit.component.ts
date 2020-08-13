@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {User, UserAlt} from '../../../../../models/user.model';
+import {User, UserAlt} from '../../../../models/user.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../services/user/user.service';
 import {tap} from 'rxjs/operators';
