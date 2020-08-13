@@ -48,10 +48,10 @@
               {{ authority }}
               <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
             </mat-chip>
+            <mat-chip *ngIf="element.getMissingAuthorities()?.length" [matMenuTriggerFor]="menu">
+              <mat-icon>add</mat-icon>
+            </mat-chip>
           </mat-chip-list>
-          <mat-chip *ngIf="element.getMissingAuthorities()?.length" [matMenuTriggerFor]="menu">
-            <mat-icon>add</mat-icon>
-          </mat-chip>
           <mat-menu #menu="matMenu">
             <button (click)="onAddAuthority(element, authority)"
                     *ngFor="let authority of element.getMissingAuthorities()"
@@ -59,6 +59,27 @@
               {{ authority }}
             </button>
           </mat-menu>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell>Actions</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="onViewUser(element)" aria-label="View user data" color="primary" mat-icon-button
+                  matTooltip="View">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <span class="m-2"></span>
+          <button (click)="onEditUser(element)" aria-label="Edit user data" color="accent" mat-icon-button
+                  matTooltip="Edit">
+            <mat-icon>create</mat-icon>
+          </button>
+          <span class="m-2"></span>
+          <button (click)="onDeleteUser(element)" aria-label="Delete user" color="warn" mat-icon-button
+                  matTooltip="Delete">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
         </td>
       </ng-container>
 

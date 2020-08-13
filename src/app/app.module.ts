@@ -31,6 +31,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTreeModule} from '@angular/material/tree';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -76,6 +77,7 @@ export function tokenGetter(): string {
     MatSlideToggleModule,
     MatMenuModule,
     MatTreeModule,
+    MatTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
