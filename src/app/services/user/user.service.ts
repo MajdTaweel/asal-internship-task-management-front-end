@@ -6,6 +6,10 @@ import {map, tap} from 'rxjs/operators';
 import {AuthService} from '../auth/auth.service';
 import {Role, User} from '../../../models/user.model';
 
+function getCurrentUsername(): string {
+  return localStorage.getItem('username');
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,34 +20,24 @@ export class UserService {
   private userDidInitialize = false;
 
   constructor(private authService: AuthService, private httpClient: HttpClient) {
-    this.authService.tokenChanges.pipe(tap(username => {
-      username = username?.length ? username : localStorage.getItem('username');
-      console.log('JWT changed, username:', username);
-      if (username?.length) {
+    this.authService.tokenChanges.pipe(
+      tap(username => {
+        username = username?.length ? username : getCurrentUsername();
+        console.log('JWT changed, username:', username);
         if (this.userSubscription) {
           this.userSubscription.unsubscribe();
         }
-        this.userSubscription = this.retrieveUser(username).subscribe(user => {
-          if (!this.userDidInitialize) {
-            this.userInitialized.next(user);
-            this.userDidInitialize = true;
-          }
-        });
-      } else {
-        if (!this.userDidInitialize) {
-          this.userInitialized.next(null);
-          this.userDidInitialize = true;
-        }
-        if (this.userSubscription) {
-          this.userSubscription.unsubscribe();
-          this.userSubscription = null;
-        }
-      }
-    })).subscribe();
+        this.initializeUser(username);
+      })
+    ).subscribe();
   }
 
   get currentUser(): Observable<User> {
     return this.user.asObservable();
+  }
+
+  get isUserInitialized(): Observable<User> {
+    return this.userDidInitialize ? this.user.asObservable() : this.userInitialized.asObservable();
   }
 
   getAuthenticationState(): Observable<Role[]> {
@@ -72,24 +66,43 @@ export class UserService {
     return this.httpClient.put<User>(`${environment.apiURL}users`, user);
   }
 
-  get isUserInitialized(): Observable<User> {
-    return this.userDidInitialize ? this.user.asObservable() : this.userInitialized.asObservable();
+  private initializeUser(username: string): void {
+    if (username?.length) {
+      this.userSubscription = this.retrieveUser(username)
+        .subscribe(user => {
+          if (!this.userDidInitialize) {
+            this.userInitialized.next(user);
+            this.userDidInitialize = true;
+          }
+        });
+    } else if (!this.userDidInitialize) {
+      this.userInitialized.next(null);
+      this.userDidInitialize = true;
+    }
   }
 
   private retrieveUser(username: string): Observable<User> {
-    if (this.authService.isAuthenticated()) {
-      if (this.userSubscription) {
-        this.userSubscription.unsubscribe();
-      }
-      return this.httpClient.get<any>(`${environment.apiURL}users/${username}`)
-        .pipe(tap(user => {
-          this.user.next(user);
-          console.log(user);
-        }));
-    } else {
-      this.user.next(null);
-      console.log(`User ${username} is not logged in`);
-      return of(null);
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
     }
+    if (this.authService.isAuthenticated()) {
+      return this.getUserByUsername(username);
+    } else {
+      console.log(`User ${username} is not logged in`);
+      return this.emptyUser();
+    }
+  }
+
+  private getUserByUsername(username: string): Observable<User> {
+    return this.httpClient.get<User>(`${environment.apiURL}users/${username}`)
+      .pipe(tap(user => {
+        this.user.next(user);
+        console.log(user);
+      }));
+  }
+
+  private emptyUser(): Observable<null> {
+    this.user.next(null);
+    return of(null);
   }
 }
