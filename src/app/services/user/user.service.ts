@@ -72,7 +72,7 @@ export class UserService {
 
   private initializeUser(username: string): void {
     if (username?.length) {
-      this.userSubscription = this.retrieveUser(username)
+      this.userSubscription = this.retrieveCurrentUser(username)
         .subscribe(user => {
           if (!this.userDidInitialize) {
             this.userInitialized.next(user);
@@ -80,17 +80,25 @@ export class UserService {
           }
         });
     } else if (!this.userDidInitialize) {
-      this.userInitialized.next(null);
-      this.userDidInitialize = true;
+      this.userSubscription = this.emptyUser()
+        .subscribe(_ => {
+          this.userInitialized.next(null);
+          this.userDidInitialize = true;
+        });
     }
   }
 
-  private retrieveUser(username: string): Observable<User> {
+  private retrieveCurrentUser(username: string): Observable<User> {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
     if (this.authService.isAuthenticated()) {
-      return this.getUserByUsername(username);
+      return this.getUserByUsername(username)
+        .pipe(tap(user => {
+          this.user.next(user);
+          console.log('Current user', user);
+          return user;
+        }));
     } else {
       console.log(`User ${username} is not logged in`);
       return this.emptyUser();
@@ -98,11 +106,7 @@ export class UserService {
   }
 
   private getUserByUsername(username: string): Observable<User> {
-    return this.httpClient.get<User>(`${environment.apiURL}users/${username}`)
-      .pipe(tap(user => {
-        this.user.next(user);
-        console.log(user);
-      }));
+    return this.httpClient.get<User>(`${environment.apiURL}users/${username}`);
   }
 
   private emptyUser(): Observable<null> {
