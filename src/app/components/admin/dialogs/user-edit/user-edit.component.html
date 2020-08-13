@@ -1,1 +1,88 @@
-<p>user-edit works!</p>
+<h1 mat-dialog-title>
+  {{ data?.isEdit ? 'Edit user ' + data?.user?.login + '\'s info' : 'User ' + data?.user?.login + '\'s info' }}
+</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onUpdateUser()" [formGroup]="userEditForm">
+    <mat-form-field class="w-100">
+      <mat-label>Id</mat-label>
+      <input formControlName="id" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Email</mat-label>
+      <input formControlName="email" matInput placeholder="Ex. user@example.com" type="email">
+    </mat-form-field>
+
+    <div class="w-100 d-flex">
+      <mat-form-field class="w-100">
+        <mat-label>First name</mat-label>
+        <input formControlName="firstName" matInput placeholder="Ex. John">
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <mat-label>Last name</mat-label>
+        <input formControlName="lastName" matInput placeholder="Ex. Doe">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="w-100">
+      <mat-label>Username</mat-label>
+      <input formControlName="login" matInput placeholder="Ex. john.doe">
+    </mat-form-field>
+
+    <div class="mb-3">
+      <mat-slide-toggle formControlName="activated">Activated</mat-slide-toggle>
+    </div>
+
+    <mat-form-field class="w-100">
+      <mat-label>Authorities</mat-label>
+      <mat-select formControlName="authorities" multiple>
+        <mat-option value="ROLE_USER">User</mat-option>
+        <mat-option value="ROLE_TEAM_LEAD">Team Lead</mat-option>
+        <mat-option value="ROLE_ADMIN">Admin</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Language</mat-label>
+      <mat-select formControlName="langKey">
+        <mat-option value="en">English</mat-option>
+        <mat-option value="ar-ly">Arabic (Libya)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Image URL</mat-label>
+      <input formControlName="imageUrl" matInput type="url">
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Created By</mat-label>
+      <input formControlName="createdBy" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Created Date</mat-label>
+      <input [matDatepicker]="createdDatePicker" formControlName="createdDate" matInput>
+      <mat-datepicker-toggle [for]="createdDatePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #createdDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Last Modified By</mat-label>
+      <input formControlName="lastModifiedBy" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Last Modified Date</mat-label>
+      <input [matDatepicker]="lastModifiedDatePicker" formControlName="lastModifiedDate" matInput>
+      <mat-datepicker-toggle [for]="lastModifiedDatePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #lastModifiedDatePicker></mat-datepicker>
+    </mat-form-field>
+  </form>
+</div>
+<div class="d-flex justify-content-end" mat-dialog-actions>
+  <button *ngIf="data?.isEdit" [mat-dialog-close]="null" cdkFocusInitial mat-button>Cancel</button>
+  <button (click)="onUpdateUser()" *ngIf="data?.isEdit" mat-button>Save</button>
+  <button *ngIf="!data?.isEdit" [mat-dialog-close]="null" cdkFocusInitial mat-button>Close</button>
+</div>
