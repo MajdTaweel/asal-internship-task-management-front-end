@@ -27,7 +27,7 @@ export class UserService {
         if (this.userSubscription) {
           this.userSubscription.unsubscribe();
         }
-        this.initializeUser(username);
+        this.userSubscription = this.initializeUser(username).subscribe();
       })
     ).subscribe();
   }
@@ -70,21 +70,23 @@ export class UserService {
     return this.httpClient.delete<null>(`${environment.apiURL}users/${username}`);
   }
 
-  private initializeUser(username: string): void {
+  private initializeUser(username: string): Observable<User> {
     if (username?.length) {
-      this.userSubscription = this.retrieveCurrentUser(username)
-        .subscribe(user => {
+      return this.retrieveCurrentUser(username)
+        .pipe(tap(user => {
           if (!this.userDidInitialize) {
             this.userInitialized.next(user);
             this.userDidInitialize = true;
           }
-        });
-    } else if (!this.userDidInitialize) {
-      this.userSubscription = this.emptyUser()
-        .subscribe(_ => {
-          this.userInitialized.next(null);
-          this.userDidInitialize = true;
-        });
+        }));
+    } else {
+      return this.emptyUser()
+        .pipe(tap(_ => {
+          if (!this.userDidInitialize) {
+            this.userInitialized.next(null);
+            this.userDidInitialize = true;
+          }
+        }));
     }
   }
 
