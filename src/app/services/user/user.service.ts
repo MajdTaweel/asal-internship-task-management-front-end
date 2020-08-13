@@ -66,8 +66,8 @@ export class UserService {
     return this.httpClient.put<User>(`${environment.apiURL}users`, user);
   }
 
-  deleteUser(username: string): void {
-    this.httpClient.delete<User>(`${environment.apiURL}users/${username}`);
+  deleteUser(username: string): Observable<null> {
+    return this.httpClient.delete<null>(`${environment.apiURL}users/${username}`);
   }
 
   private initializeUser(username: string): void {
