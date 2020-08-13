@@ -3,6 +3,6 @@
   <p>{{ data?.message }}</p>
 </div>
 <div mat-dialog-actions class="d-flex justify-content-end">
-  <button mat-button *ngFor="let button of data?.extraButtons" (click)="button?.handler()">{{ button?.text }}</button>
-  <button mat-button [mat-dialog-close]="null" cdkFocusInitial>Close</button>
+  <button (click)="button?.handler()" *ngFor="let button of data?.buttons" mat-button>{{ button?.text }}</button>
+  <button *ngIf="!data?.buttons?.length" [mat-dialog-close]="null" cdkFocusInitial mat-button>Close</button>
 </div>
