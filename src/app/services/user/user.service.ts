@@ -66,6 +66,10 @@ export class UserService {
     return this.httpClient.put<User>(`${environment.apiURL}users`, user);
   }
 
+  deleteUser(username: string): void {
+    this.httpClient.delete<User>(`${environment.apiURL}users/${username}`);
+  }
+
   private initializeUser(username: string): void {
     if (username?.length) {
       this.userSubscription = this.retrieveUser(username)
