@@ -1,12 +1,13 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Role, User, UserAlt} from '../../../../models/user.model';
 import {UserService} from '../../../services/user/user.service';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {UserEditComponent} from '../dialogs/user-edit/user-edit.component';
-import {tap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {AlertComponent} from '../../alert/alert.component';
 
 @Component({
   selector: 'app-user-management',
@@ -19,6 +20,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private subscriptions = new Subscription();
   private updatedUserSubscription: Subscription;
+  private deletedUserSubscription: Subscription;
 
   constructor(private userService: UserService, private dialog: MatDialog) {
   }
@@ -32,7 +34,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   onUpdateUser(user: User): void {
-    const sub = this.userService.updateUser(user).subscribe(updatedUser => console.log('User updated', updatedUser));
+    const sub = this.userService.updateUser(user)
+      .subscribe(updatedUser => console.log('User updated', updatedUser));
     this.subscriptions.add(sub);
   }
 
@@ -57,20 +60,24 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       this.updatedUserSubscription.unsubscribe();
     }
     const dialogRef = this.displayUserEditDialog(user);
-    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogCloses(dialogRef).subscribe();
+    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef).subscribe();
   }
 
   onDeleteUser(user: UserAlt): void {
-    this.userService.deleteUser(user.login).subscribe(deletedUser => {
-      this.removeDeletedUserObject(user);
-      console.log('User deleted', deletedUser);
-    });
+    if (this.deletedUserSubscription) {
+      this.deletedUserSubscription.unsubscribe();
+    }
+    const dialogRef = this.displayUserDeleteConfirmationDialog(user.login);
+    this.deletedUserSubscription = this.checkConfirmationThenDelete(dialogRef, user).subscribe();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     if (this.updatedUserSubscription) {
       this.updatedUserSubscription.unsubscribe();
+    }
+    if (this.deletedUserSubscription) {
+      this.deletedUserSubscription.unsubscribe();
     }
   }
 
@@ -86,7 +93,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getUpdatedUserAfterUserEditDialogCloses(dialogRef: MatDialogRef<UserEditComponent>): Observable<User> {
+  private getUpdatedUserAfterUserEditDialogClosed(dialogRef: MatDialogRef<UserEditComponent>): Observable<User> {
     return dialogRef.afterClosed().pipe(tap((updatedUser: User) => {
       if (updatedUser) {
         this.replaceOldUserObjectWithUpdatedUserObject(updatedUser);
@@ -105,5 +112,59 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     const deletedUserIndex = this.dataSource.data.findIndex(deletedUser => deletedUser.id === user.id);
     this.dataSource.data.splice(deletedUserIndex, 1);
     this.dataSource._updateChangeSubscription();
+  }
+
+  private displayUserDeleteConfirmationDialog(username: string): MatDialogRef<AlertComponent> {
+    const dialogRef = this.dialog.open(
+      AlertComponent,
+      {
+        data: {
+          title: 'Confirm Deletion',
+          message: `User "${username}" will be permanently deleted. Continue deletion?`,
+          buttons: [
+            {
+              text: 'Confirm',
+              handler: () => {
+                dialogRef.close(true);
+              },
+            },
+            {
+              text: 'Cancel',
+              handler: () => {
+                dialogRef.close();
+              },
+            }
+          ],
+        },
+      },
+    );
+    return dialogRef;
+  }
+
+  private isConfirmedAfterConfirmationDialogClosed(
+    dialogRef: MatDialogRef<AlertComponent>
+  ): Observable<boolean> {
+    return dialogRef.afterClosed().pipe(map(confirmed => {
+      console.log('User deletion confirmed?', !!confirmed);
+      return !!confirmed;
+    }));
+  }
+
+  private deleteUser(user: UserAlt): Observable<null> {
+    return this.userService.deleteUser(user.login)
+      .pipe(tap(deletedUser => {
+        this.removeDeletedUserObject(user);
+        console.log('User deleted', deletedUser);
+      }));
+  }
+
+  private checkConfirmationThenDelete(dialogRef: MatDialogRef<AlertComponent>, user: UserAlt): Observable<null> {
+    return this.isConfirmedAfterConfirmationDialogClosed(dialogRef)
+      .pipe(switchMap(confirmed => {
+        if (confirmed) {
+          return this.deleteUser(user);
+        }
+        return of(null);
+      }));
   }
 }
