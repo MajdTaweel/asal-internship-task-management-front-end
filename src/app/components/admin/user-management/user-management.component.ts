@@ -4,6 +4,8 @@ import {UserService} from '../../../services/user/user.service';
 import {Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
+import {MatDialog} from '@angular/material/dialog';
+import {UserEditComponent} from '../dialogs/user-edit/user-edit.component';
 
 @Component({
   selector: 'app-user-management',
@@ -11,12 +13,12 @@ import {MatSort} from '@angular/material/sort';
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['login', 'fullName', 'email', 'activated', 'authorities'];
+  displayedColumns = ['login', 'fullName', 'email', 'activated', 'authorities', 'actions'];
   dataSource: MatTableDataSource<UserAlt>;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private subscriptions = new Subscription();
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -35,6 +37,23 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   onAddAuthority(user: UserAlt, authority: Role): void {
     user.authorities.push(authority);
     this.onUpdateUser(user);
+  }
+
+  onViewUser(user: UserAlt): void {
+    this.dialog.open(
+      UserEditComponent,
+      {
+        data: {
+          user,
+        },
+      },
+    );
+  }
+
+  onEditUser(user: UserAlt): void {
+  }
+
+  onDeleteUser(user: UserAlt): void {
   }
 
   ngOnDestroy(): void {

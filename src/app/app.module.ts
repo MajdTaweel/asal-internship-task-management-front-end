@@ -32,6 +32,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {UserEditComponent} from './components/admin/dialogs/user-edit/user-edit.component';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -46,7 +47,8 @@ export function tokenGetter(): string {
     FooterComponent,
     AlertComponent,
     HasAnyAuthorityDirective,
-    UserManagementComponent
+    UserManagementComponent,
+    UserEditComponent
   ],
   imports: [
     BrowserModule,
