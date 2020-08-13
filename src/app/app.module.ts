@@ -36,6 +36,7 @@ import {UserEditComponent} from './components/admin/dialogs/user-edit/user-edit.
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import {HomeComponent} from './components/home/home.component';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -51,7 +52,8 @@ export function tokenGetter(): string {
     AlertComponent,
     HasAnyAuthorityDirective,
     UserManagementComponent,
-    UserEditComponent
+    UserEditComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
