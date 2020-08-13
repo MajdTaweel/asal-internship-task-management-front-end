@@ -33,6 +33,9 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {UserEditComponent} from './components/admin/dialogs/user-edit/user-edit.component';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -80,6 +83,9 @@ export function tokenGetter(): string {
     MatMenuModule,
     MatTreeModule,
     MatTooltipModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

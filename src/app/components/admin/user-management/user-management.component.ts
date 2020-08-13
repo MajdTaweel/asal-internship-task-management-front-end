@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Role, UserAlt} from '../../../../models/user.model';
+import {Role, User, UserAlt} from '../../../../models/user.model';
 import {UserService} from '../../../services/user/user.service';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {UserEditComponent} from '../dialogs/user-edit/user-edit.component';
+import {tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-management',
@@ -17,6 +18,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<UserAlt>;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private subscriptions = new Subscription();
+  private updatedUserSubscription: Subscription;
 
   constructor(private userService: UserService, private dialog: MatDialog) {
   }
@@ -29,7 +31,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  onUpdateUser(user: UserAlt): void {
+  onUpdateUser(user: User): void {
     const sub = this.userService.updateUser(user).subscribe(updatedUser => console.log('User updated', updatedUser));
     this.subscriptions.add(sub);
   }
@@ -51,12 +53,57 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   onEditUser(user: UserAlt): void {
+    if (this.updatedUserSubscription) {
+      this.updatedUserSubscription.unsubscribe();
+    }
+    const dialogRef = this.displayUserEditDialog(user);
+    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogCloses(dialogRef).subscribe();
   }
 
   onDeleteUser(user: UserAlt): void {
+    this.userService.deleteUser(user.login).subscribe(deletedUser => {
+      this.removeDeletedUserObject(user);
+      console.log('User deleted', deletedUser);
+    });
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    if (this.updatedUserSubscription) {
+      this.updatedUserSubscription.unsubscribe();
+    }
+  }
+
+  private displayUserEditDialog(user: UserAlt): MatDialogRef<UserEditComponent> {
+    return this.dialog.open(
+      UserEditComponent,
+      {
+        data: {
+          user,
+          isEdit: true,
+        },
+      },
+    );
+  }
+
+  private getUpdatedUserAfterUserEditDialogCloses(dialogRef: MatDialogRef<UserEditComponent>): Observable<User> {
+    return dialogRef.afterClosed().pipe(tap((updatedUser: User) => {
+      if (updatedUser) {
+        this.replaceOldUserObjectWithUpdatedUserObject(updatedUser);
+        console.log('User updated', updatedUser);
+      }
+    }));
+  }
+
+  private replaceOldUserObjectWithUpdatedUserObject(updatedUser: User): void {
+    const oldUserIndex = this.dataSource.data.findIndex(oldUser => oldUser.id === updatedUser.id);
+    this.dataSource.data.fill(new UserAlt(updatedUser), oldUserIndex, oldUserIndex + 1);
+    this.dataSource._updateChangeSubscription();
+  }
+
+  private removeDeletedUserObject(user: UserAlt): void {
+    const deletedUserIndex = this.dataSource.data.findIndex(deletedUser => deletedUser.id === user.id);
+    this.dataSource.data.splice(deletedUserIndex, 1);
+    this.dataSource._updateChangeSubscription();
   }
 }
