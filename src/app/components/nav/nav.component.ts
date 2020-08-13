@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {MatTreeNestedDataSource} from '@angular/material/tree';
+import {AuthService} from '../../services/auth/auth.service';
 
 export interface RouteNode {
   name: string;
@@ -30,7 +31,7 @@ export class NavComponent implements OnInit {
   treeControl = new NestedTreeControl<RouteNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<RouteNode>();
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.dataSource.data = TREE_DATA;
   }
 
@@ -41,5 +42,14 @@ export class NavComponent implements OnInit {
 
   onToggleNavList(): void {
     this.isNavListOpened = !this.isNavListOpened;
+  }
+
+  onLogOut(): void {
+    this.authService.logOut();
+  }
+
+  onLogOutThenToggleNavList(): void {
+    this.onLogOut();
+    this.onToggleNavList();
   }
 }

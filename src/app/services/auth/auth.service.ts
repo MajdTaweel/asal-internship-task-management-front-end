@@ -61,6 +61,10 @@ export class AuthService {
       && !this.jwtHelperService.isTokenExpired(localStorage.getItem('id_token'));
   }
 
+  logOut(): void {
+    this.emptyUsernameAndToken();
+  }
+
   get tokenChanges(): Observable<string> {
     return this.tokenChange.asObservable();
   }

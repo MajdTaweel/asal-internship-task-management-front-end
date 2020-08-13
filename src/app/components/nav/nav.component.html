@@ -16,11 +16,11 @@
             <button mat-menu-item routerLink="/admin/user-management">User Management</button>
       </mat-menu>
 
-      <button *appHasAnyAuthority="'ANONYMOUS'" mat-button routerLink="/login">Log In</button>
+      <button *appHasAnyAuthority="'ROLE_ANONYMOUS'" mat-button routerLink="/login">Log In</button>
 
       <button *appHasAnyAuthority="'ROLE_ANONYMOUS'" mat-stroked-button routerLink="/register">Register</button>
 
-      <button *appHasAnyAuthority="'ROLE_USER'" mat-stroked-button>Log Out</button>
+      <button (click)="onLogOut()" *appHasAnyAuthority="'ROLE_USER'" mat-stroked-button>Log Out</button>
     </span>
   </mat-toolbar-row>
   <mat-toolbar-row id="ham-list" class="d-flex flex-column" *ngIf="isNavListOpened">
@@ -58,6 +58,6 @@
       Register
     </button>
 
-    <button (click)="onToggleNavList()" *appHasAnyAuthority="'ROLE_USER'" mat-button>Log Out</button>
+    <button (click)="onLogOutThenToggleNavList()" *appHasAnyAuthority="'ROLE_USER'" mat-button>Log Out</button>
   </mat-toolbar-row>
 </mat-toolbar>
