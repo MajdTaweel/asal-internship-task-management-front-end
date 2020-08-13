@@ -41,28 +41,9 @@ export class AuthService {
         password,
         rememberMe: true,
       }
-    ).pipe(tap(token => {
-        localStorage.setItem('username', username);
-        localStorage.setItem('id_token', token.id_token);
-        this.tokenChange.next(username);
-        console.log('JWT:', token.id_token);
-      }),
-      catchError(err => {
-        let dialogRef: MatDialogRef<AlertComponent>;
-        if (err.status === 401 || err.status === 403 || err.status === 404) {
-          dialogRef = this.dialog.open(AlertComponent, {
-            data: {title: 'Wrong Credentials', message: 'Incorrect username or password.'}
-          });
-        } else {
-          dialogRef = this.dialog.open(AlertComponent, {
-            data: {title: 'Connection Error', message: 'Error connecting. Please check your internet connection.'}
-          });
-        }
-        localStorage.removeItem('username');
-        localStorage.removeItem('id_token');
-        this.tokenChange.next(null);
-        return of(dialogRef);
-      })
+    ).pipe(
+      tap(token => this.storeUsernameAndToken(username, token.id_token)),
+      catchError(error => of(this.handleLoginException(error)))
     ).subscribe();
   }
 
@@ -70,7 +51,9 @@ export class AuthService {
     this.httpClient.post(
       `${environment.apiURL}register`,
       {...registerParams, langKey: 'en', passwordConfirmation: undefined}
-    ).pipe(tap(_ => this.logIn(registerParams.login, registerParams.password))).subscribe();
+    ).pipe(
+      tap(_ => this.logIn(registerParams.login, registerParams.password))
+    ).subscribe();
   }
 
   isAuthenticated(): boolean {
@@ -80,5 +63,35 @@ export class AuthService {
 
   get tokenChanges(): Observable<string> {
     return this.tokenChange.asObservable();
+  }
+
+  private storeUsernameAndToken(username: string, token: string): void {
+    localStorage.setItem('username', username);
+    localStorage.setItem('id_token', token);
+    this.tokenChange.next(username);
+    console.log('JWT:', token);
+  }
+
+  private handleLoginException(error: any): MatDialogRef<AlertComponent> {
+    this.emptyUsernameAndToken();
+    return this.presentLoginErrorDialog(error);
+  }
+
+  private emptyUsernameAndToken(): void {
+    localStorage.removeItem('username');
+    localStorage.removeItem('id_token');
+    this.tokenChange.next(null);
+  }
+
+  private presentLoginErrorDialog(error: any): MatDialogRef<AlertComponent> {
+    if (error.status === 401 || error.status === 403 || error.status === 404) {
+      return this.openAlertDialog('Wrong Credentials', 'Incorrect username or password.');
+    } else {
+      return this.openAlertDialog('Connection Error', 'Error connecting. Please check your internet connection.');
+    }
+  }
+
+  private openAlertDialog(title: string, message: string): MatDialogRef<AlertComponent> {
+    return this.dialog.open(AlertComponent, {data: {title, message}});
   }
 }
