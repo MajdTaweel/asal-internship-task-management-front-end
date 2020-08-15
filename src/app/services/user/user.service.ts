@@ -33,8 +33,12 @@ export class UserService {
           this.userSubscription.unsubscribe();
         }
         this.userSubscription = this.initializeUser(username)
-          .pipe(tap(_ => this.navigateToHome()
-            .then(value => console.log('Navigated to home after logging in and getting user data', value))))
+          .pipe(tap(user => {
+            if (user) {
+              this.navigateToHome()
+                .then(value => console.log('Navigated to home after logging in and getting user data', value));
+            }
+          }))
           .subscribe();
       })
     ).subscribe();
