@@ -5,6 +5,7 @@ import {environment} from '../../../environments/environment';
 import {map, tap} from 'rxjs/operators';
 import {AuthService} from '../auth/auth.service';
 import {Role, User} from '../../models/user.model';
+import {Router} from '@angular/router';
 
 function getCurrentUsername(): string {
   return localStorage.getItem('username');
@@ -19,7 +20,11 @@ export class UserService {
   private userInitialized = new Subject<User>();
   private userDidInitialize = false;
 
-  constructor(private authService: AuthService, private httpClient: HttpClient) {
+  constructor(
+    private authService: AuthService,
+    private httpClient: HttpClient,
+    private router: Router,
+  ) {
     this.authService.tokenChanges.pipe(
       tap(username => {
         username = username?.length ? username : getCurrentUsername();
@@ -27,7 +32,10 @@ export class UserService {
         if (this.userSubscription) {
           this.userSubscription.unsubscribe();
         }
-        this.userSubscription = this.initializeUser(username).subscribe();
+        this.userSubscription = this.initializeUser(username)
+          .pipe(tap(_ => this.navigateToHome()
+            .then(value => console.log('Navigated to home after logging in and getting user data', value))))
+          .subscribe();
       })
     ).subscribe();
   }
@@ -114,5 +122,9 @@ export class UserService {
   private emptyUser(): Observable<null> {
     this.user.next(null);
     return of(null);
+  }
+
+  private navigateToHome(): Promise<boolean> {
+    return this.router.navigate(['/']);
   }
 }
