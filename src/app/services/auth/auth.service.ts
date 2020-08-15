@@ -6,6 +6,7 @@ import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AlertComponent} from '../../components/alert/alert.component';
+import {Router} from '@angular/router';
 
 interface RegisterParams {
   email: string;
@@ -27,6 +28,7 @@ export class AuthService {
     private httpClient: HttpClient,
     private jwtHelperService: JwtHelperService,
     private dialog: MatDialog,
+    private router: Router,
   ) {
   }
 
@@ -63,6 +65,7 @@ export class AuthService {
 
   logOut(): void {
     this.emptyUsernameAndToken();
+    this.navigateToLogin().then(value => console.log('Navigated to login after logging out', value));
   }
 
   get tokenChanges(): Observable<string> {
@@ -97,5 +100,9 @@ export class AuthService {
 
   private openAlertDialog(title: string, message: string): MatDialogRef<AlertComponent> {
     return this.dialog.open(AlertComponent, {data: {title, message}});
+  }
+
+  private navigateToLogin(): Promise<boolean> {
+    return this.router.navigate(['/', 'login']);
   }
 }
