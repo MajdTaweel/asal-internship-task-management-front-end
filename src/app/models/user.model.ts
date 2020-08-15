@@ -1,19 +1,22 @@
-export class User {
+import {AbstractAuditing} from './abstract-auditing.model';
+
+export class User extends AbstractAuditing {
   constructor(
     public activated: boolean,
     public authorities: Role[],
-    public createdBy: string,
-    public createdDate: Date,
     public email: string,
     public firstName: string,
     public id: string,
     public imageUrl: string,
     public langKey: string,
-    public lastModifiedBy: string,
-    public lastModifiedDate: Date,
     public lastName: string,
     public login: string,
+    public createdBy: string = null,
+    public createdDate: Date = null,
+    public lastModifiedBy: string = null,
+    public lastModifiedDate: Date = null,
   ) {
+    super();
   }
 }
 
@@ -24,17 +27,17 @@ export class UserAlt extends User {
     super(
       user.activated,
       user.authorities,
-      user.createdBy,
-      user.createdDate,
       user.email,
       user.firstName,
       user.id,
       user.imageUrl,
       user.langKey,
-      user.lastModifiedBy,
-      user.lastModifiedDate,
       user.lastName,
       user.login,
+      user.createdBy,
+      user.createdDate,
+      user.lastModifiedBy,
+      user.lastModifiedDate,
     );
     this.fullName = `${this.firstName} ${this.lastName}`;
   }
