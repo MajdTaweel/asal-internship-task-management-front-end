@@ -119,9 +119,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   private deleteUser(user: UserAlt): Observable<null> {
     return this.userService.deleteUser(user.login)
-      .pipe(tap(deletedUser => {
+      .pipe(tap(_ => {
         this.removeDeletedUserObject(user);
-        console.log('User deleted', deletedUser);
+        console.log('User deleted', user);
       }));
   }
 
