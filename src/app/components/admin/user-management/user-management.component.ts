@@ -6,8 +6,8 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {UserEditComponent} from '../dialogs/user-edit/user-edit.component';
-import {map, switchMap, tap} from 'rxjs/operators';
-import {AlertComponent} from '../../alert/alert.component';
+import {switchMap, tap} from 'rxjs/operators';
+import {AlertService} from '../../../services/alert/alert.service';
 
 @Component({
   selector: 'app-user-management',
@@ -22,7 +22,11 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private updatedUserSubscription: Subscription;
   private deletedUserSubscription: Subscription;
 
-  constructor(private userService: UserService, private dialog: MatDialog) {
+  constructor(
+    private userService: UserService,
+    private dialog: MatDialog,
+    private alertService: AlertService
+  ) {
   }
 
   ngOnInit(): void {
@@ -67,8 +71,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (this.deletedUserSubscription) {
       this.deletedUserSubscription.unsubscribe();
     }
-    const dialogRef = this.displayUserDeleteConfirmationDialog(user.login);
-    this.deletedUserSubscription = this.checkConfirmationThenDelete(dialogRef, user).subscribe();
+    this.deletedUserSubscription = this.checkConfirmationThenDelete(user).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -114,42 +117,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.dataSource._updateChangeSubscription();
   }
 
-  private displayUserDeleteConfirmationDialog(username: string): MatDialogRef<AlertComponent> {
-    const dialogRef = this.dialog.open(
-      AlertComponent,
-      {
-        data: {
-          title: 'Confirm Deletion',
-          message: `User "${username}" will be permanently deleted. Continue deletion?`,
-          buttons: [
-            {
-              text: 'Confirm',
-              handler: () => {
-                dialogRef.close(true);
-              },
-            },
-            {
-              text: 'Cancel',
-              handler: () => {
-                dialogRef.close();
-              },
-            }
-          ],
-        },
-      },
-    );
-    return dialogRef;
-  }
-
-  private isConfirmedAfterConfirmationDialogClosed(
-    dialogRef: MatDialogRef<AlertComponent>
-  ): Observable<boolean> {
-    return dialogRef.afterClosed().pipe(map(confirmed => {
-      console.log('User deletion confirmed?', !!confirmed);
-      return !!confirmed;
-    }));
-  }
-
   private deleteUser(user: UserAlt): Observable<null> {
     return this.userService.deleteUser(user.login)
       .pipe(tap(deletedUser => {
@@ -158,8 +125,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       }));
   }
 
-  private checkConfirmationThenDelete(dialogRef: MatDialogRef<AlertComponent>, user: UserAlt): Observable<null> {
-    return this.isConfirmedAfterConfirmationDialogClosed(dialogRef)
+  private checkConfirmationThenDelete(user: UserAlt): Observable<null> {
+    return this.alertService
+      .displayDeleteConfirmationDialog(`User "${user.login}" will be permanently deleted. Continue deletion?`)
       .pipe(switchMap(confirmed => {
         if (confirmed) {
           return this.deleteUser(user);
