@@ -125,7 +125,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: {
       user: UserAlt;
       isEdit?: boolean;
-      buttons?: { text: string, handler: () => void }[];
     },
     private userService: UserService,
   ) {
@@ -148,13 +147,13 @@ export class UserEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  dismissDialogWithUpdatedUser(user: User): void {
-    this.dialogRef.close(user);
-  }
-
   ngOnDestroy(): void {
     if (this.updateSubscription) {
       this.updateSubscription.unsubscribe();
     }
+  }
+
+  private dismissDialogWithUpdatedUser(user: User): void {
+    this.dialogRef.close(user);
   }
 }
