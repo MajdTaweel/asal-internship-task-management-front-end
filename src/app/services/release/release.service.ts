@@ -19,4 +19,8 @@ export class ReleaseService {
   getReleases(): Observable<Release[]> {
     return this.httpClient.get<Release[]>(`${environment.apiURL}releases`);
   }
+
+  deleteRelease(id: string): Observable<null> {
+    return this.httpClient.delete<null>(`${environment.apiURL}releases/${id}`);
+  }
 }
