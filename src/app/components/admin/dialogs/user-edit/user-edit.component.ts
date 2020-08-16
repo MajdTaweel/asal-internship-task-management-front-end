@@ -138,12 +138,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
   onUpdateUser(): void {
     if (this.userEditForm.valid) {
-      this.userEditForm.enable();
-      const user: User = this.userEditForm.value;
-      this.userEditForm.disable();
-      this.updateSubscription = this.userService.updateUser(user)
-        .pipe(tap(updatedUser => this.dismissDialogWithUpdatedUser(updatedUser)))
-        .subscribe();
+      this.updateUser();
     }
   }
 
@@ -151,6 +146,20 @@ export class UserEditComponent implements OnInit, OnDestroy {
     if (this.updateSubscription) {
       this.updateSubscription.unsubscribe();
     }
+  }
+
+  private getUssrObject(): User {
+    this.userEditForm.enable();
+    const user: User = this.userEditForm.value;
+    this.userEditForm.disable();
+    return user;
+  }
+
+  private updateUser(): void {
+    const user = this.getUssrObject();
+    this.updateSubscription = this.userService.updateUser(user)
+      .pipe(tap(updatedUser => this.dismissDialogWithUpdatedUser(updatedUser)))
+      .subscribe();
   }
 
   private dismissDialogWithUpdatedUser(user: User): void {
