@@ -4,11 +4,11 @@
       <mat-card-title>{{ release?.title }}</mat-card-title>
       <mat-card-subtitle>{{ release?.type }}</mat-card-subtitle>
       <mat-card-actions *ngIf="isReleaseOwnerOrAdmin(release.createdBy) | async">
-        <button (click)="onEditRelease(release.id)" aria-label="Edit release" color="accent" mat-icon-button
+        <button (click)="onEditRelease(release)" aria-label="Edit release" color="accent" mat-icon-button
                 matTooltip="Edit">
           <mat-icon>create</mat-icon>
         </button>
-        <button (click)="onDeleteRelease(release.id)" aria-label="Delete release" color="warn" mat-icon-button
+        <button (click)="onDeleteRelease(release)" aria-label="Delete release" color="warn" mat-icon-button
                 matTooltip="Delete">
           <mat-icon>delete_forever</mat-icon>
         </button>
@@ -22,7 +22,7 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card (click)="onDisplayReleaseEditDialog()" *appHasAnyAuthority="'ROLE_TEAM_LEAD'" class="card-clickable">
+  <mat-card (click)="onCreateRelease()" *appHasAnyAuthority="'ROLE_TEAM_LEAD'" class="card-clickable">
     <mat-card-content class="d-flex align-items-center h-100">
       <mat-icon>add</mat-icon>
     </mat-card-content>

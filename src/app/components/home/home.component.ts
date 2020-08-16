@@ -28,28 +28,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.updateReleasesList();
   }
 
-  onDisplayReleaseEditDialog(): void {
-    // this.releaseService.createRelease(new Release(
-    //   null,
-    //   'New Release',
-    //   'Test Release',
-    //   (new Date()),
-    //   ReleaseStatus.NEW,
-    // )).subscribe(release => {
-    //   console.log('Created release', release);
-    //   this.updateReleasesList();
-    // });
-  }
-
   isReleaseOwnerOrAdmin(createdBy: string): Observable<boolean> {
     return this.releaseService.isReleaseOwnerOrAdmin(createdBy);
   }
 
-  onEditRelease(id: string): void {
+  onCreateRelease(): void {
   }
 
-  onDeleteRelease(id: string): void {
-    const sub = this.checkConfirmationThenDelete(id).subscribe();
+  onEditRelease(release: Release): void {
+  }
+
+  onDeleteRelease(release: Release): void {
+    const sub = this.checkConfirmationThenDelete(release).subscribe();
     this.subscriptions.add(sub);
   }
 
@@ -61,25 +51,38 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.releaseService.getReleases().pipe(tap(releases => console.log('My releases', releases)));
   }
 
-  private checkConfirmationThenDelete(id: string): Observable<null> {
+  private checkConfirmationThenDelete(release: Release): Observable<null> {
     return this.alertService
       .displayDeleteConfirmationDialog('Release will be permanently deleted. Continue deletion?')
       .pipe(switchMap(confirmed => {
         if (confirmed) {
-          return this.deleteRelease(id);
+          return this.deleteRelease(release);
         }
         return of(null);
       }));
   }
 
-  private deleteRelease(id: string): Observable<null> {
-    return this.releaseService.deleteRelease(id).pipe(tap(_ => {
+  private deleteRelease(release: Release): Observable<null> {
+    return this.releaseService.deleteRelease(release.id).pipe(tap(_ => {
       this.updateReleasesList();
-      console.log(`Release with id: ${id} deleted`);
+      console.log('Release deleted', release);
     }));
   }
 
   private updateReleasesList(): void {
     this.releases = this.getReleases();
+  }
+
+  private displayReleaseEditDialog(): void {
+    // this.releaseService.createRelease(new Release(
+    //   null,
+    //   'New Release',
+    //   'Test Release',
+    //   (new Date()),
+    //   ReleaseStatus.NEW,
+    // )).subscribe(release => {
+    //   console.log('Created release', release);
+    //   this.updateReleasesList();
+    // });
   }
 }
