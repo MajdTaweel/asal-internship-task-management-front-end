@@ -21,7 +21,7 @@ import {FooterComponent} from './components/footer/footer.component';
 import {JwtModule} from '@auth0/angular-jwt';
 import {environment} from '../environments/environment';
 import {MatDialogModule} from '@angular/material/dialog';
-import {AlertComponent} from './components/alert/alert.component';
+import {AlertComponent} from './components/dialogs/alert/alert.component';
 import {HasAnyAuthorityDirective} from './directives/has-any-authority/has-any-authority.directive';
 import {UserManagementComponent} from './components/admin/user-management/user-management.component';
 import {MatTableModule} from '@angular/material/table';

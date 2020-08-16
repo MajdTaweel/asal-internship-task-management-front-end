@@ -5,7 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {AlertComponent} from '../../components/alert/alert.component';
+import {AlertComponent} from '../../components/dialogs/alert/alert.component';
 import {Router} from '@angular/router';
 
 interface RegisterParams {
