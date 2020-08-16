@@ -33,6 +33,6 @@ export class ReleaseService {
 
   isReleaseOwnerOrAdmin(createdBy: string): Observable<boolean> {
     return this.userService.currentUser
-      .pipe(map(user => this.userService.hasAnyAuthority(Role.ADMIN) || user.login === createdBy));
+      .pipe(map(user => this.userService.hasAnyAuthority(Role.ADMIN) || user?.login === createdBy));
   }
 }
