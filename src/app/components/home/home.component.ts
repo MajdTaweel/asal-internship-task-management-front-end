@@ -6,6 +6,7 @@ import {Observable, of, Subscription} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {AlertService} from '../../services/alert/alert.service';
+import {ReleaseEditComponent} from '../dialogs/release-edit/release-edit.component';
 
 @Component({
   selector: 'app-home',
@@ -32,10 +33,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.releaseService.isReleaseOwnerOrAdmin(createdBy);
   }
 
+  onViewRelease(release: Release): void {
+    this.displayReleaseEditDialog(false, release);
+  }
+
   onCreateRelease(): void {
+    this.displayReleaseEditDialog(true);
   }
 
   onEditRelease(release: Release): void {
+    this.displayReleaseEditDialog(true, release);
   }
 
   onDeleteRelease(release: Release): void {
@@ -73,16 +80,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.releases = this.getReleases();
   }
 
-  private displayReleaseEditDialog(): void {
-    // this.releaseService.createRelease(new Release(
-    //   null,
-    //   'New Release',
-    //   'Test Release',
-    //   (new Date()),
-    //   ReleaseStatus.NEW,
-    // )).subscribe(release => {
-    //   console.log('Created release', release);
-    //   this.updateReleasesList();
-    // });
+  private displayReleaseEditDialog(isEdit?: boolean, release?: Release): void {
+    this.dialog.open(ReleaseEditComponent, {
+      data: {
+        release,
+        isEdit,
+      },
+    });
   }
 }

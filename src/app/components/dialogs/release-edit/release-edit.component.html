@@ -1,1 +1,66 @@
-<p>release-edit works!</p>
+<h1 mat-dialog-title>
+  {{ data?.isEdit ? 'Edit release ' + data?.release?.title + '\'s info' : 'User ' + data?.release?.title + '\'s info' }}
+</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onUpdateRelease()" [formGroup]="releaseEditForm">
+    <mat-form-field class="w-100">
+      <mat-label>Id</mat-label>
+      <input formControlName="id" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Title</mat-label>
+      <input formControlName="title" matInput placeholder="Ex. New Release">
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Type</mat-label>
+      <input formControlName="type" matInput placeholder="Ex. Issue/Bug Fix">
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Deadline</mat-label>
+      <input [matDatepicker]="deadlinePicker" formControlName="deadline" matInput>
+      <mat-datepicker-toggle [for]="deadlinePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #deadlinePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="NEW">New</mat-option>
+        <mat-option value="IN_PROGRESS">In Progress</mat-option>
+        <mat-option value="DONE">Done</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Created By</mat-label>
+      <input formControlName="createdBy" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Created Date</mat-label>
+      <input [matDatepicker]="createdDatePicker" formControlName="createdDate" matInput>
+      <mat-datepicker-toggle [for]="createdDatePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #createdDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Last Modified By</mat-label>
+      <input formControlName="lastModifiedBy" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Last Modified Date</mat-label>
+      <input [matDatepicker]="lastModifiedDatePicker" formControlName="lastModifiedDate" matInput>
+      <mat-datepicker-toggle [for]="lastModifiedDatePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #lastModifiedDatePicker></mat-datepicker>
+    </mat-form-field>
+  </form>
+</div>
+<div class="d-flex justify-content-end" mat-dialog-actions>
+  <button *ngIf="data?.isEdit" [mat-dialog-close]="null" cdkFocusInitial mat-button>Cancel</button>
+  <button (click)="onUpdateRelease()" *ngIf="data?.isEdit" mat-button>Save</button>
+  <button *ngIf="!data?.isEdit" [mat-dialog-close]="null" cdkFocusInitial mat-button>Close</button>
+</div>
