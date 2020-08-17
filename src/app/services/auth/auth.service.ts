@@ -91,10 +91,11 @@ export class AuthService {
   }
 
   private presentLoginErrorDialog(error: any): MatDialogRef<AlertComponent> {
-    if (error.status === 401 || error.status === 403 || error.status === 404) {
-      return this.openAlertDialog('Wrong Credentials', 'Incorrect username or password.');
+    console.log(error);
+    if (!!error?.error?.detail) {
+      return this.openAlertDialog(error.error.title, error.error.detail);
     } else {
-      return this.openAlertDialog('Connection Error', 'Error connecting. Please check your internet connection.');
+      return this.openAlertDialog('Something Went Wrong', 'Please check your internet connection.');
     }
   }
 
