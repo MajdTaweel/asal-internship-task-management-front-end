@@ -83,8 +83,8 @@ export class ReleaseEditComponent implements OnInit, OnDestroy {
       },
     ),
   });
+  isNewRelease: boolean;
   private updateSubscription: Subscription;
-  private isNewRelease: boolean;
 
   constructor(
     private dialogRef: MatDialogRef<ReleaseEditComponent>,
