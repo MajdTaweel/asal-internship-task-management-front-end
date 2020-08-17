@@ -118,8 +118,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
       },
     ),
   });
+  isNewUser: boolean;
   private updateSubscription: Subscription;
-  private isNewUser: boolean;
 
   constructor(
     private dialogRef: MatDialogRef<UserEditComponent>,

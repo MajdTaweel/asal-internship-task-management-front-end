@@ -1,5 +1,9 @@
 <h1 mat-dialog-title>
-  {{ data?.isEdit ? 'Edit user ' + data?.user?.login + '\'s info' : 'User ' + data?.user?.login + '\'s info' }}
+  {{ isNewUser
+  ? 'Create a new user'
+  : (data?.isEdit
+    ? 'Edit user ' + data?.user?.login + '\'s info'
+    : 'User ' + data?.user?.login + '\'s info') }}
 </h1>
 <div mat-dialog-content>
   <form (ngSubmit)="onUpdateUser()" [formGroup]="userEditForm">

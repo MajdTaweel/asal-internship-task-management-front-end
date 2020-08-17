@@ -21,6 +21,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   private updatedUserSubscription: Subscription;
   private deletedUserSubscription: Subscription;
+  private usersSubscription: Subscription;
 
   constructor(
     private userService: UserService,
@@ -30,15 +31,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const sub = this.userService.getAllUsers().subscribe(users => {
+    this.usersSubscription = this.getUsers().subscribe(users => {
       this.dataSource = new MatTableDataSource(users.map(user => new UserAlt(user)));
       this.dataSource.sort = this.sort;
     });
-    this.subscriptions.add(sub);
   }
 
   onCreateUser(): void {
-    this.displayUserEditDialog(true);
+    this.createUser();
   }
 
   onViewUser(event: MouseEvent, user: UserAlt): void {
@@ -48,19 +48,12 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   onEditUser(event: MouseEvent, user: UserAlt): void {
     event.stopPropagation();
-    if (this.updatedUserSubscription) {
-      this.updatedUserSubscription.unsubscribe();
-    }
-    const dialogRef = this.displayUserEditDialog(true, user);
-    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef).subscribe();
+    this.updateUser(user);
   }
 
   onDeleteUser(event: MouseEvent, user: UserAlt): void {
     event.stopPropagation();
-    if (this.deletedUserSubscription) {
-      this.deletedUserSubscription.unsubscribe();
-    }
-    this.deletedUserSubscription = this.checkConfirmationThenDelete(user).subscribe();
+    this.checkConfirmationThenDelete(user);
   }
 
   ngOnDestroy(): void {
@@ -71,6 +64,38 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (this.deletedUserSubscription) {
       this.deletedUserSubscription.unsubscribe();
     }
+  }
+
+  private createUser(): void {
+    if (this.updatedUserSubscription) {
+      this.updatedUserSubscription.unsubscribe();
+    }
+    const dialogRef = this.displayUserEditDialog(true);
+    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef)
+      .subscribe(_ => this.updateUsersList());
+  }
+
+  private updateUser(user: UserAlt): void {
+    if (this.updatedUserSubscription) {
+      this.updatedUserSubscription.unsubscribe();
+    }
+    const dialogRef = this.displayUserEditDialog(true, user);
+    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef)
+      .subscribe(_ => this.updateUsersList());
+  }
+
+  private updateUsersList(): void {
+    if (this.usersSubscription) {
+      this.usersSubscription.unsubscribe();
+    }
+    this.usersSubscription = this.getUsers().subscribe(users => {
+      this.dataSource.data = users.map(user => new UserAlt(user));
+      this.dataSource._updateChangeSubscription();
+    });
+  }
+
+  private getUsers(): Observable<User[]> {
+    return this.userService.getAllUsers().pipe(tap(users => console.log('All users', users)));
   }
 
   private displayUserEditDialog(isEdit?: boolean, user?: UserAlt): MatDialogRef<UserEditComponent> {
@@ -100,28 +125,26 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.dataSource._updateChangeSubscription();
   }
 
-  private removeDeletedUserObject(user: UserAlt): void {
-    const deletedUserIndex = this.dataSource.data.findIndex(deletedUser => deletedUser.id === user.id);
-    this.dataSource.data.splice(deletedUserIndex, 1);
-    this.dataSource._updateChangeSubscription();
-  }
-
   private deleteUser(user: UserAlt): Observable<null> {
     return this.userService.deleteUser(user.login)
       .pipe(tap(_ => {
-        this.removeDeletedUserObject(user);
+        this.updateUsersList();
         console.log('User deleted', user);
       }));
   }
 
-  private checkConfirmationThenDelete(user: UserAlt): Observable<null> {
-    return this.alertService
+  private checkConfirmationThenDelete(user: UserAlt): void {
+    if (this.deletedUserSubscription) {
+      this.deletedUserSubscription.unsubscribe();
+    }
+    this.deletedUserSubscription = this.alertService
       .displayDeleteConfirmationDialog(`User "${user.login}" will be permanently deleted. Continue deletion?`)
       .pipe(switchMap(confirmed => {
         if (confirmed) {
           return this.deleteUser(user);
         }
         return of(null);
-      }));
+      }))
+      .subscribe();
   }
 }

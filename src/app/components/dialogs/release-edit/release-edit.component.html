@@ -1,5 +1,9 @@
 <h1 mat-dialog-title>
-  {{ data?.isEdit ? 'Edit release ' + data?.release?.title + '\'s info' : 'User ' + data?.release?.title + '\'s info' }}
+  {{ isNewRelease
+  ? 'Create a new release'
+  : (data?.isEdit
+    ? 'Edit release ' + data?.release?.title + '\'s info'
+    : 'Release ' + data?.release?.title + '\'s info') }}
 </h1>
 <div mat-dialog-content>
   <form (ngSubmit)="onUpdateRelease()" [formGroup]="releaseEditForm">
