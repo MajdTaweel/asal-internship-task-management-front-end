@@ -15,7 +15,7 @@ export class ReleaseEditComponent implements OnInit, OnDestroy {
   releaseEditForm = new FormGroup({
     id: new FormControl(
       {
-        value: '',
+        value: null,
         disabled: true,
       },
     ),

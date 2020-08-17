@@ -15,7 +15,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
   userEditForm = new FormGroup({
     id: new FormControl(
       {
-        value: '',
+        value: null,
         disabled: true,
       },
     ),
