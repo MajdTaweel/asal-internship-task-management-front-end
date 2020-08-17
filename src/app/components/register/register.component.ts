@@ -47,7 +47,11 @@ export class RegisterComponent implements OnInit {
       ),
       passwordConfirmation: new FormControl(
         '',
-        Validators.required,
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(255),
+        ],
       ),
     },
     RegisterComponent.passwordsMatch,
