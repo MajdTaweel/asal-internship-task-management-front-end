@@ -25,23 +25,7 @@ export class UserService {
     private httpClient: HttpClient,
     private router: Router,
   ) {
-    this.authService.tokenChanges.pipe(
-      tap(username => {
-        username = username?.length ? username : getCurrentUsername();
-        console.log('JWT changed, username:', username);
-        if (this.userSubscription) {
-          this.userSubscription.unsubscribe();
-        }
-        this.userSubscription = this.initializeUser(username)
-          .pipe(tap(user => {
-            if (user) {
-              this.navigateToHome()
-                .then(value => console.log('Navigated to home after logging in and getting user data', value));
-            }
-          }))
-          .subscribe();
-      })
-    ).subscribe();
+    this.subscribeToJWTChanges();
   }
 
   get currentUser(): Observable<User> {
@@ -90,24 +74,37 @@ export class UserService {
     return this.httpClient.get<User>(`${environment.apiURL}users/${username}`);
   }
 
-  private initializeUser(username: string): Observable<User> {
-    if (username?.length) {
-      return this.retrieveCurrentUser(username)
-        .pipe(tap(user => {
-          if (!this.userDidInitialize) {
-            this.userInitialized.next(user);
-            this.userDidInitialize = true;
-          }
-        }));
-    } else {
-      return this.emptyUser()
-        .pipe(tap(_ => {
-          if (!this.userDidInitialize) {
-            this.userInitialized.next(null);
-            this.userDidInitialize = true;
-          }
-        }));
+  private subscribeToJWTChanges(): void {
+    this.authService.tokenChanges.pipe(
+      tap(username => {
+        username = username?.length ? username : getCurrentUsername();
+        console.log('JWT changed, username:', username);
+        this.initializeUser(username);
+      })
+    ).subscribe();
+  }
+
+  private initializeUser(username: string): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
     }
+    const userObservable = username?.length
+      ? this.retrieveCurrentUser(username)
+      : this.emptyUser();
+    this.userSubscription = this.getUserInitializationObservable(userObservable).subscribe();
+  }
+
+  private getUserInitializationObservable(userObservable: Observable<User>): Observable<User> {
+    return userObservable
+      .pipe(tap(user => {
+        if (this.userDidInitialize) {
+          this.navigateToHome()
+            .then(value => console.log('Navigated to home after logging in and getting user data', value));
+        } else {
+          this.userInitialized.next(user);
+          this.userDidInitialize = true;
+        }
+      }));
   }
 
   private retrieveCurrentUser(username: string): Observable<User> {
