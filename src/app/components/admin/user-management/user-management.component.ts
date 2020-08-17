@@ -18,10 +18,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   displayedColumns = ['login', 'fullName', 'email', 'activated', 'authorities', 'actions'];
   dataSource: MatTableDataSource<UserAlt>;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  private subscriptions = new Subscription();
+  private usersSubscription: Subscription;
   private updatedUserSubscription: Subscription;
   private deletedUserSubscription: Subscription;
-  private usersSubscription: Subscription;
 
   constructor(
     private userService: UserService,
@@ -57,7 +56,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    if (this.usersSubscription) {
+      this.usersSubscription.unsubscribe();
+    }
     if (this.updatedUserSubscription) {
       this.updatedUserSubscription.unsubscribe();
     }
@@ -71,8 +72,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       this.updatedUserSubscription.unsubscribe();
     }
     const dialogRef = this.displayUserEditDialog(true);
-    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef)
-      .subscribe(_ => this.updateUsersList());
+    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef).subscribe();
   }
 
   private updateUser(user: UserAlt): void {
@@ -80,8 +80,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       this.updatedUserSubscription.unsubscribe();
     }
     const dialogRef = this.displayUserEditDialog(true, user);
-    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef)
-      .subscribe(_ => this.updateUsersList());
+    this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef).subscribe();
   }
 
   private updateUsersList(): void {
@@ -113,16 +112,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private getUpdatedUserAfterUserEditDialogClosed(dialogRef: MatDialogRef<UserEditComponent>): Observable<User> {
     return dialogRef.afterClosed().pipe(tap((updatedUser: User) => {
       if (updatedUser) {
-        this.replaceOldUserObjectWithUpdatedUserObject(updatedUser);
+        this.updateUsersList();
         console.log('User updated', updatedUser);
       }
     }));
-  }
-
-  private replaceOldUserObjectWithUpdatedUserObject(updatedUser: User): void {
-    const oldUserIndex = this.dataSource.data.findIndex(oldUser => oldUser.id === updatedUser.id);
-    this.dataSource.data.fill(new UserAlt(updatedUser), oldUserIndex, oldUserIndex + 1);
-    this.dataSource._updateChangeSubscription();
   }
 
   private deleteUser(user: UserAlt): Observable<null> {
