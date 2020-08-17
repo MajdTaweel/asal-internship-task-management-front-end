@@ -97,8 +97,10 @@ export class ReleaseEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.releaseEditForm.setValue(this.data?.release);
     this.isNewRelease = this.data?.isEdit && !this.data?.release;
+    if (!this.isNewRelease) {
+      this.releaseEditForm.setValue(this.data?.release);
+    }
   }
 
   onUpdateRelease(): void {
