@@ -4,7 +4,7 @@ import {ReleaseService} from '../../services/release/release.service';
 import {Release} from '../../models/release.model';
 import {Observable, of, Subscription} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AlertService} from '../../services/alert/alert.service';
 import {ReleaseEditComponent} from '../dialogs/release-edit/release-edit.component';
 import {MatTableDataSource} from '@angular/material/table';
@@ -20,7 +20,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<Release>;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private releasesSubscription: Subscription;
-  private subscriptions = new Subscription();
+  private viewReleaseIfAuthorizedSubscription: Subscription;
+  private updateReleaseSubscription: Subscription;
+  private deleteReleaseSubscription: Subscription;
 
   constructor(
     private userService: UserService,
@@ -47,46 +49,81 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onCreateRelease(): void {
-    this.displayReleaseEditDialog(true);
+    this.createRelease();
   }
 
   onEditRelease(event: MouseEvent, release: Release): void {
     event.stopPropagation();
-    this.displayReleaseEditDialog(true, release);
+    this.updateRelease(release);
   }
 
   onDeleteRelease(event: MouseEvent, release: Release): void {
     event.stopPropagation();
-    const sub = this.checkConfirmationThenDelete(release).subscribe();
-    this.subscriptions.add(sub);
+    this.checkConfirmationThenDelete(release);
   }
 
   onViewReleaseIfAuthorized(event: MouseEvent, release: Release): void {
-    const sub = this.isReleaseOwnerOrAdmin(release.createdBy)
+    this.viewReleaseIfAuthorizedSubscription = this.isReleaseOwnerOrAdmin(release.createdBy)
       .subscribe(isAuthorized => isAuthorized && this.onViewRelease(event, release));
-    this.subscriptions.add(sub);
   }
 
   ngOnDestroy(): void {
     if (this.releasesSubscription) {
       this.releasesSubscription.unsubscribe();
     }
-    this.subscriptions.unsubscribe();
+    if (this.viewReleaseIfAuthorizedSubscription) {
+      this.viewReleaseIfAuthorizedSubscription.unsubscribe();
+    }
+    if (this.updateReleaseSubscription) {
+      this.updateReleaseSubscription.unsubscribe();
+    }
+    if (this.deleteReleaseSubscription) {
+      this.deleteReleaseSubscription.unsubscribe();
+    }
   }
 
   private getReleases(): Observable<Release[]> {
     return this.releaseService.getReleases().pipe(tap(releases => console.log('My releases', releases)));
   }
 
-  private checkConfirmationThenDelete(release: Release): Observable<null> {
-    return this.alertService
+  private checkConfirmationThenDelete(release: Release): void {
+    if (this.deleteReleaseSubscription) {
+      this.deleteReleaseSubscription.unsubscribe();
+    }
+    this.alertService
       .displayDeleteConfirmationDialog('Release will be permanently deleted. Continue deletion?')
       .pipe(switchMap(confirmed => {
         if (confirmed) {
           return this.deleteRelease(release);
         }
         return of(null);
-      }));
+      }))
+      .subscribe();
+  }
+
+  private getUpdatedReleaseAfterReleaseEditDialogClosed(dialogRef: MatDialogRef<ReleaseEditComponent>): Observable<Release> {
+    return dialogRef.afterClosed().pipe(tap((updatedRelease: Release) => {
+      if (updatedRelease) {
+        this.updateReleasesList();
+        console.log('Release updated', updatedRelease);
+      }
+    }));
+  }
+
+  private createRelease(): void {
+    if (this.updateReleaseSubscription) {
+      this.updateReleaseSubscription.unsubscribe();
+    }
+    const dialogRef = this.displayReleaseEditDialog(true);
+    this.updateReleaseSubscription = this.getUpdatedReleaseAfterReleaseEditDialogClosed(dialogRef).subscribe();
+  }
+
+  private updateRelease(release: Release): void {
+    if (this.updateReleaseSubscription) {
+      this.updateReleaseSubscription.unsubscribe();
+    }
+    const dialogRef = this.displayReleaseEditDialog(true, release);
+    this.updateReleaseSubscription = this.getUpdatedReleaseAfterReleaseEditDialogClosed(dialogRef).subscribe();
   }
 
   private deleteRelease(release: Release): Observable<null> {
@@ -106,8 +143,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  private displayReleaseEditDialog(isEdit?: boolean, release?: Release): void {
-    this.dialog.open(ReleaseEditComponent, {
+  private displayReleaseEditDialog(isEdit?: boolean, release?: Release): MatDialogRef<ReleaseEditComponent> {
+    return this.dialog.open(ReleaseEditComponent, {
       data: {
         release,
         isEdit,
