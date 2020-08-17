@@ -86,6 +86,10 @@ export class UserService {
     return this.httpClient.delete<null>(`${environment.apiURL}users/${username}`);
   }
 
+  getUserByUsername(username: string): Observable<User> {
+    return this.httpClient.get<User>(`${environment.apiURL}users/${username}`);
+  }
+
   private initializeUser(username: string): Observable<User> {
     if (username?.length) {
       return this.retrieveCurrentUser(username)
@@ -121,10 +125,6 @@ export class UserService {
       console.log(`User ${username} is not logged in`);
       return this.emptyUser();
     }
-  }
-
-  private getUserByUsername(username: string): Observable<User> {
-    return this.httpClient.get<User>(`${environment.apiURL}users/${username}`);
   }
 
   private emptyUser(): Observable<null> {

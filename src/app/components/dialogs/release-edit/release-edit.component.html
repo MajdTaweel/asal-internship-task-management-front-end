@@ -39,6 +39,21 @@
     </mat-form-field>
 
     <mat-form-field class="w-100">
+      <mat-chip-list #chipList aria-label="Team selection">
+        <mat-chip (removed)="onRemoveTeamMember(i)" *ngFor="let member of releaseEditForm?.value?.team; let i = index;"
+                  [removable]="true" [selectable]="true">
+          {{ member?.login }}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+        <input (matChipInputTokenEnd)="onAddTeamMember($event)"
+               [matChipInputAddOnBlur]="true"
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               placeholder="New team member...">
+      </mat-chip-list>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
       <mat-label>Created By</mat-label>
       <input formControlName="createdBy" matInput>
     </mat-form-field>
