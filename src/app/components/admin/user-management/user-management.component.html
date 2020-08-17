@@ -10,7 +10,7 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Username</th>
         <td *matCellDef="let element" mat-cell>
           <div class="d-flex align-items-center">
-            <mat-chip-avatar class="mr-1">
+            <mat-chip-avatar *ngIf="element?.imageUrl?.length" class="mr-1">
               <img [src]="element.imageUrl" alt="Avatar">
             </mat-chip-avatar>
             <div>{{ element.login }}</div>
@@ -34,7 +34,7 @@
       <ng-container matColumnDef="activated">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Activated</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-slide-toggle (change)="onUpdateUser(element)" [(ngModel)]="element.activated"></mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="element.activated" disabled></mat-slide-toggle>
         </td>
       </ng-container>
 
@@ -43,22 +43,10 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Authorities</th>
         <td *matCellDef="let element" mat-cell>
           <mat-chip-list aria-label="Authorities">
-            <mat-chip (removed)="onUpdateUser(element)" *ngFor="let authority of element.authorities" [removable]="true"
-                      [selectable]="true">
+            <mat-chip *ngFor="let authority of element.authorities">
               {{ authority }}
-              <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
-            </mat-chip>
-            <mat-chip *ngIf="element.getMissingAuthorities()?.length" [matMenuTriggerFor]="menu">
-              <mat-icon>add</mat-icon>
             </mat-chip>
           </mat-chip-list>
-          <mat-menu #menu="matMenu">
-            <button (click)="onAddAuthority(element, authority)"
-                    *ngFor="let authority of element.getMissingAuthorities()"
-                    mat-menu-item>
-              {{ authority }}
-            </button>
-          </mat-menu>
         </td>
       </ng-container>
 
@@ -84,7 +72,7 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      <tr (click)="onViewUser(row)" *matRowDef="let row; columns: displayedColumns;" class="element-row" mat-row></tr>
     </table>
 
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

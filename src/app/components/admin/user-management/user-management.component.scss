@@ -4,3 +4,11 @@ td.mat-footer-cell {
   padding-left: 8px;
   padding-right: 8px;
 }
+
+tr.element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
