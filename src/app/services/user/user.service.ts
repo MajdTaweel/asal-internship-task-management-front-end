@@ -74,6 +74,10 @@ export class UserService {
     return this.httpClient.get<User[]>(`${environment.apiURL}users`);
   }
 
+  createUser(user: User): Observable<User> {
+    return this.httpClient.post<User>(`${environment.apiURL}users`, user);
+  }
+
   updateUser(user: User): Observable<User> {
     return this.httpClient.put<User>(`${environment.apiURL}users`, user);
   }

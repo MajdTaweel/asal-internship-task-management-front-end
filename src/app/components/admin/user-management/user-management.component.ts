@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Role, User, UserAlt} from '../../../models/user.model';
+import {User, UserAlt} from '../../../models/user.model';
 import {UserService} from '../../../services/user/user.service';
 import {Observable, of, Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
@@ -37,37 +37,26 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  onUpdateUser(user: User): void {
-    const sub = this.userService.updateUser(user)
-      .subscribe(updatedUser => console.log('User updated', updatedUser));
-    this.subscriptions.add(sub);
+  onCreateUser(): void {
+    this.displayUserEditDialog(true);
   }
 
-  onAddAuthority(user: UserAlt, authority: Role): void {
-    user.authorities.push(authority);
-    this.onUpdateUser(user);
+  onViewUser(event: MouseEvent, user: UserAlt): void {
+    event.stopPropagation();
+    this.displayUserEditDialog(false, user);
   }
 
-  onViewUser(user: UserAlt): void {
-    this.dialog.open(
-      UserEditComponent,
-      {
-        data: {
-          user,
-        },
-      },
-    );
-  }
-
-  onEditUser(user: UserAlt): void {
+  onEditUser(event: MouseEvent, user: UserAlt): void {
+    event.stopPropagation();
     if (this.updatedUserSubscription) {
       this.updatedUserSubscription.unsubscribe();
     }
-    const dialogRef = this.displayUserEditDialog(user);
+    const dialogRef = this.displayUserEditDialog(true, user);
     this.updatedUserSubscription = this.getUpdatedUserAfterUserEditDialogClosed(dialogRef).subscribe();
   }
 
-  onDeleteUser(user: UserAlt): void {
+  onDeleteUser(event: MouseEvent, user: UserAlt): void {
+    event.stopPropagation();
     if (this.deletedUserSubscription) {
       this.deletedUserSubscription.unsubscribe();
     }
@@ -84,13 +73,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  private displayUserEditDialog(user: UserAlt): MatDialogRef<UserEditComponent> {
+  private displayUserEditDialog(isEdit?: boolean, user?: UserAlt): MatDialogRef<UserEditComponent> {
     return this.dialog.open(
       UserEditComponent,
       {
         data: {
           user,
-          isEdit: true,
+          isEdit,
         },
       },
     );

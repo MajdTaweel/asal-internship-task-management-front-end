@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {User, UserAlt} from '../../../../models/user.model';
+import {Role, User, UserAlt} from '../../../../models/user.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../services/user/user.service';
 import {tap} from 'rxjs/operators';
@@ -65,13 +65,13 @@ export class UserEditComponent implements OnInit, OnDestroy {
     ),
     activated: new FormControl(
       {
-        value: false,
+        value: true,
         disabled: !this.data?.isEdit,
       },
     ),
     authorities: new FormControl(
       {
-        value: '',
+        value: [Role.USER],
         disabled: !this.data?.isEdit,
       },
       [
@@ -80,7 +80,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
     ),
     langKey: new FormControl(
       {
-        value: '',
+        value: 'en',
         disabled: !this.data?.isEdit,
       },
       [
@@ -119,11 +119,12 @@ export class UserEditComponent implements OnInit, OnDestroy {
     ),
   });
   private updateSubscription: Subscription;
+  private isNewUser: boolean;
 
   constructor(
     private dialogRef: MatDialogRef<UserEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
-      user: UserAlt;
+      user?: UserAlt;
       isEdit?: boolean;
     },
     private userService: UserService,
@@ -131,9 +132,12 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const user = {...this.data.user};
-    delete user.fullName;
-    this.userEditForm.setValue(user);
+    this.isNewUser = this.data?.isEdit && !this.data?.user;
+    if (!this.isNewUser) {
+      const user = {...this.data.user};
+      delete user.fullName;
+      this.userEditForm.setValue(user);
+    }
   }
 
   onUpdateUser(): void {
@@ -157,7 +161,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
   private updateUser(): void {
     const user = this.getUssrObject();
-    this.updateSubscription = this.userService.updateUser(user)
+    const operation = this.isNewUser
+      ? this.userService.createUser(user)
+      : this.userService.updateUser(user);
+    this.updateSubscription = operation
       .pipe(tap(updatedUser => this.dismissDialogWithUpdatedUser(updatedUser)))
       .subscribe();
   }

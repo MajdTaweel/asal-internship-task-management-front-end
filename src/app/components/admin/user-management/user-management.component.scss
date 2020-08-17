@@ -5,10 +5,14 @@ td.mat-footer-cell {
   padding-right: 8px;
 }
 
-tr.element-row:not(.example-expanded-row):hover {
+tr.element-row {
+  cursor: pointer;
+}
+
+tr.element-row:hover {
   background: whitesmoke;
 }
 
-tr.element-row:not(.example-expanded-row):active {
+tr.element-row:active {
   background: #efefef;
 }
