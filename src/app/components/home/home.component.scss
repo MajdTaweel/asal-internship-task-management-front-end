@@ -1,8 +1,18 @@
-.releases-container {
-  justify-content: space-evenly;
-  gap: 3em;
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
-.card-clickable:hover {
+tr.element-row {
   cursor: pointer;
+}
+
+tr.element-row:hover {
+  background: whitesmoke;
+}
+
+tr.element-row:active {
+  background: #efefef;
 }
