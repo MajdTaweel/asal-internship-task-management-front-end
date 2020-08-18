@@ -9,7 +9,7 @@ export class Task extends AbstractAuditing {
     public releaseId: string,
     public description?: string,
     public deadline?: Date,
-    public assignees?: User[],
+    public assignees: User[] = [],
     public createdBy: string = null,
     public createdDate: Date = null,
     public lastModifiedBy: string = null,
