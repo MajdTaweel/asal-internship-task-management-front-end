@@ -39,6 +39,7 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {HomeComponent} from './components/home/home.component';
 import {ReleaseEditComponent} from './components/dialogs/release-edit/release-edit.component';
 import {TaskManagementComponent} from './components/task-management/task-management.component';
+import {TaskEditComponent} from './components/dialogs/task-edit/task-edit.component';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -58,6 +59,7 @@ export function tokenGetter(): string {
     HomeComponent,
     ReleaseEditComponent,
     TaskManagementComponent,
+    TaskEditComponent,
   ],
   imports: [
     BrowserModule,
