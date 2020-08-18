@@ -41,9 +41,9 @@
     <mat-form-field class="w-100">
       <mat-chip-list #chipList aria-label="Team selection">
         <mat-chip (removed)="onRemoveTeamMember(i)" *ngFor="let member of releaseEditForm?.value?.team; let i = index;"
-                  [removable]="true" [selectable]="true">
+                  [removable]="data?.isEdit" [selectable]="true">
           {{ member?.login }}
-          <mat-icon matChipRemove>cancel</mat-icon>
+          <mat-icon *ngIf="data?.isEdit" matChipRemove>cancel</mat-icon>
         </mat-chip>
         <input (matChipInputTokenEnd)="onAddTeamMember($event)"
                [matChipInputAddOnBlur]="true"
