@@ -12,21 +12,23 @@ body {
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
 
-th.mat-header-cell,
-td.mat-cell,
-td.mat-footer-cell {
-  padding-left: 8px;
-  padding-right: 8px;
-}
+table.mat-table {
+  th.mat-header-cell,
+  td.mat-cell,
+  td.mat-footer-cell {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 
-tr.element-row {
-  cursor: pointer;
-}
+  tr.element-row {
+    cursor: pointer;
+  }
 
-tr.element-row:hover {
-  background: whitesmoke;
-}
+  tr.element-row:hover {
+    background: whitesmoke;
+  }
 
-tr.element-row:active {
-  background: #efefef;
+  tr.element-row:active {
+    background: #efefef;
+  }
 }
