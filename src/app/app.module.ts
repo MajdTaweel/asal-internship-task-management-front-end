@@ -40,6 +40,7 @@ import {HomeComponent} from './components/home/home.component';
 import {ReleaseEditComponent} from './components/dialogs/release-edit/release-edit.component';
 import {TaskManagementComponent} from './components/task-management/task-management.component';
 import {TaskEditComponent} from './components/dialogs/task-edit/task-edit.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 export function tokenGetter(): string {
   return localStorage.getItem('id_token');
@@ -94,6 +95,7 @@ export function tokenGetter(): string {
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatAutocompleteModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

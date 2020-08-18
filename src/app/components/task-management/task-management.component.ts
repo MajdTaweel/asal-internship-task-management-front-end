@@ -7,7 +7,7 @@ import {UserService} from '../../services/user/user.service';
 import {ReleaseService} from '../../services/release/release.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AlertService} from '../../services/alert/alert.service';
-import {switchMap, tap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {Task} from '../../models/task.model';
 import {TaskService} from '../../services/task/task.service';
 import {TaskEditComponent} from '../dialogs/task-edit/task-edit.component';
@@ -25,6 +25,7 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   release: Observable<Release>;
   releaseId: string;
   private tasksSubscription: Subscription;
+  private viewTaskSubscription: Subscription;
   private updateTaskSubscription: Subscription;
   private deleteTaskSubscription: Subscription;
 
@@ -53,7 +54,10 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
 
   onViewTask(event: MouseEvent, task: Task): void {
     event.stopPropagation();
-    this.displayTaskEditDialog(false, task);
+    if (this.viewTaskSubscription) {
+      this.viewTaskSubscription.unsubscribe();
+    }
+    this.viewTaskSubscription = this.displayTaskEditDialog(false, task).subscribe();
   }
 
   onCreateTask(): void {
@@ -73,6 +77,9 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.tasksSubscription) {
       this.tasksSubscription.unsubscribe();
+    }
+    if (this.viewTaskSubscription) {
+      this.viewTaskSubscription.unsubscribe();
     }
     if (this.updateTaskSubscription) {
       this.updateTaskSubscription.unsubscribe();
@@ -114,16 +121,18 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
     if (this.updateTaskSubscription) {
       this.updateTaskSubscription.unsubscribe();
     }
-    const dialogRef = this.displayTaskEditDialog(true);
-    this.updateTaskSubscription = this.getUpdatedTaskAfterTaskEditDialogClosed(dialogRef).subscribe();
+    this.updateTaskSubscription = this.displayTaskEditDialog(true)
+      .pipe(switchMap(dialogRef => this.getUpdatedTaskAfterTaskEditDialogClosed(dialogRef)))
+      .subscribe();
   }
 
   private updateTask(task: Task): void {
     if (this.updateTaskSubscription) {
       this.updateTaskSubscription.unsubscribe();
     }
-    const dialogRef = this.displayTaskEditDialog(true, task);
-    this.updateTaskSubscription = this.getUpdatedTaskAfterTaskEditDialogClosed(dialogRef).subscribe();
+    this.updateTaskSubscription = this.displayTaskEditDialog(true, task)
+      .pipe(switchMap(dialogRef => this.getUpdatedTaskAfterTaskEditDialogClosed(dialogRef)))
+      .subscribe();
   }
 
   private deleteTask(task: Task): Observable<null> {
@@ -143,13 +152,16 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  private displayTaskEditDialog(isEdit?: boolean, task?: Task): MatDialogRef<TaskEditComponent> {
-    return this.dialog.open(TaskEditComponent, {
-      data: {
-        task,
-        isEdit,
-      },
-    });
+  private displayTaskEditDialog(isEdit?: boolean, task?: Task): Observable<MatDialogRef<TaskEditComponent>> {
+    return this.release.pipe(map(release => {
+      return this.dialog.open(TaskEditComponent, {
+        data: {
+          task,
+          release,
+          isEdit,
+        },
+      });
+    }));
   }
 
   private retrieveRelease(releaseId: string): void {
