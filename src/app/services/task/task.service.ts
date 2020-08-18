@@ -2,10 +2,12 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
-import {Task} from '../../models/task.model';
+import {Task, TaskStatus} from '../../models/task.model';
 import {map} from 'rxjs/operators';
 import {Role} from '../../models/user.model';
 import {UserService} from '../user/user.service';
+
+const NEAR_DUE_MIN_DAYS = 3;
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +42,34 @@ export class TaskService {
           return !!task?.assignees?.find(assignee => assignee?.login === user?.login);
         }
       }));
+  }
+
+  isOverdue(task: Task): boolean {
+    if (task.status === TaskStatus.DONE) {
+      return false;
+    }
+    let date = task.deadline;
+    if (!date) {
+      return false;
+    }
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    return (new Date().valueOf()) >= date.valueOf();
+  }
+
+  isAlmostDue(task: Task): boolean {
+    if (task.status === TaskStatus.DONE) {
+      return false;
+    }
+    let date = task.deadline;
+    if (!date) {
+      return false;
+    }
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    const minDays = NEAR_DUE_MIN_DAYS * 24 * 60 * 60 * 1000;
+    return date.valueOf() - (new Date().valueOf()) <= minDays;
   }
 }
