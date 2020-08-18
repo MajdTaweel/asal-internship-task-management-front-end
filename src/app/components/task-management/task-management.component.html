@@ -1,1 +1,68 @@
-<p>task-management works!</p>
+<div class="w-100 d-flex justify-content-center align-items-center mt-4 mb-4">
+  <h1 class="m-0">{{ (release | async)?.title + ' Tasks' }}</h1>
+  <button (click)="onCreateTask()" color="primary" mat-icon-button>
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+<div class="w-100 d-flex justify-content-center">
+  <div class="mat-elevation-z8">
+    <table [dataSource]="dataSource" mat-table matSort>
+
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
+        <td *matCellDef="let element" mat-cell>{{ element.title }}</td>
+      </ng-container>
+
+      <!-- Deadline Column -->
+      <ng-container matColumnDef="deadline">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Deadline</th>
+        <td *matCellDef="let element" mat-cell>{{ element.deadline | date:'mediumDate' }}</td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Status</th>
+        <td *matCellDef="let element" mat-cell>{{ element.status }}</td>
+      </ng-container>
+
+      <!-- Team Column -->
+      <ng-container matColumnDef="assignees">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Assignees</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-chip-list aria-label="Assignees">
+            <mat-chip *ngFor="let assignee of element?.assignees">
+              {{ assignee?.login }}
+            </mat-chip>
+          </mat-chip-list>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell>Actions</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="onViewTask($event, element)" aria-label="View task data" color="primary" mat-icon-button
+                  matTooltip="View">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button (click)="onEditTask($event, element)" *ngIf="isTaskOwnerOrAssigneeOrAdmin(element) | async"
+                  aria-label="Edit task data" color="accent" mat-icon-button matTooltip="Edit">
+            <mat-icon>create</mat-icon>
+          </button>
+          <button (click)="onDeleteTask($event, element)" *ngIf="isTaskOwnerOrAssigneeOrAdmin(element) | async"
+                  aria-label="Delete task" color="warn" mat-icon-button matTooltip="Delete">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr (click)="onViewTask($event, row)" *matRowDef="let row; columns: displayedColumns;"
+          class="element-row"
+          mat-row></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
