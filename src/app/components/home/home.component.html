@@ -36,7 +36,7 @@
       <ng-container matColumnDef="team">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Team</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-chip-list aria-label="Authorities">
+          <mat-chip-list aria-label="Team">
             <mat-chip *ngFor="let member of element?.team">
               {{ member?.login }}
             </mat-chip>
@@ -49,17 +49,17 @@
         <th *matHeaderCellDef mat-header-cell>Actions</th>
         <td *matCellDef="let element" mat-cell>
           <button (click)="onViewRelease($event, element)" *ngIf="isReleaseOwnerOrAdmin(element.createdBy) | async"
-                  aria-label="View user data" color="primary"
+                  aria-label="View release data" color="primary"
                   mat-icon-button matTooltip="View">
             <mat-icon>visibility</mat-icon>
           </button>
           <button (click)="onEditRelease($event, element)" *ngIf="isReleaseOwnerOrAdmin(element.createdBy) | async"
-                  aria-label="Edit user data" color="accent"
+                  aria-label="Edit release data" color="accent"
                   mat-icon-button matTooltip="Edit">
             <mat-icon>create</mat-icon>
           </button>
           <button (click)="onDeleteRelease($event, element)" *ngIf="isReleaseOwnerOrAdmin(element.createdBy) | async"
-                  aria-label="Delete user" color="warn"
+                  aria-label="Delete release" color="warn"
                   mat-icon-button matTooltip="Delete">
             <mat-icon>delete_forever</mat-icon>
           </button>
@@ -67,9 +67,8 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr (click)="onViewReleaseIfAuthorized($event, row)" *matRowDef="let row; columns: displayedColumns;"
-          class="element-row"
-          mat-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/', 'release', row.id, 'task-management']"
+          class="element-row" mat-row></tr>
     </table>
 
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

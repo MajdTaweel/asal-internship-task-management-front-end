@@ -62,11 +62,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.checkConfirmationThenDelete(release);
   }
 
-  onViewReleaseIfAuthorized(event: MouseEvent, release: Release): void {
-    this.viewReleaseIfAuthorizedSubscription = this.isReleaseOwnerOrAdmin(release.createdBy)
-      .subscribe(isAuthorized => isAuthorized && this.onViewRelease(event, release));
-  }
-
   ngOnDestroy(): void {
     if (this.releasesSubscription) {
       this.releasesSubscription.unsubscribe();
