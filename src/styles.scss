@@ -1,7 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+tr.element-row {
+  cursor: pointer;
+}
+
+tr.element-row:hover {
+  background: whitesmoke;
+}
+
+tr.element-row:active {
+  background: #efefef;
+}
