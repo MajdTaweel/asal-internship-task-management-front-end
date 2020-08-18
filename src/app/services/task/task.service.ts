@@ -31,8 +31,14 @@ export class TaskService {
     return this.httpClient.delete<null>(`${environment.apiURL}tasks/${id}`);
   }
 
-  isTaskOwnerOrAdmin(createdBy: string): Observable<boolean> {
+  isTaskOwnerOrAssigneeOrAdmin(task: Task): Observable<boolean> {
     return this.userService.currentUser
-      .pipe(map(user => this.userService.hasAnyAuthority(Role.ADMIN) || user?.login === createdBy));
+      .pipe(map(user => {
+        if (this.userService.hasAnyAuthority(Role.ADMIN) || user?.login === task?.createdBy) {
+          return true;
+        } else {
+          return !!task?.assignees?.find(assignee => assignee?.login === user?.login);
+        }
+      }));
   }
 }
