@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Release, ReleaseStatus} from '../../../models/release.model';
 import {Observable, of, Subscription} from 'rxjs';
 import {ReleaseService} from '../../../services/release/release.service';
@@ -9,7 +9,7 @@ import {User} from '../../../models/user.model';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {UserService} from '../../../services/user/user.service';
-import {AlertComponent} from '../alert/alert.component';
+import {AlertService} from '../../../services/alert/alert.service';
 
 @Component({
   selector: 'app-release-edit',
@@ -106,7 +106,7 @@ export class ReleaseEditComponent implements OnInit, OnDestroy {
     },
     private releaseService: ReleaseService,
     private userService: UserService,
-    private dialog: MatDialog,
+    private alertService: AlertService,
   ) {
   }
 
@@ -186,7 +186,7 @@ export class ReleaseEditComponent implements OnInit, OnDestroy {
       }));
   }
 
-  private openAlertDialog(title: string, message: string): MatDialogRef<AlertComponent> {
-    return this.dialog.open(AlertComponent, {data: {title, message}});
+  private openAlertDialog(title: string, message: string): void {
+    this.alertService.displaySimpleAlertDialog(title, message);
   }
 }

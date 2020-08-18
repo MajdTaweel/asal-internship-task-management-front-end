@@ -12,6 +12,10 @@ export class AlertService {
   constructor(private dialog: MatDialog) {
   }
 
+  displaySimpleAlertDialog(title: string, message: string): MatDialogRef<AlertComponent> {
+    return this.dialog.open(AlertComponent, {data: {title, message}});
+  }
+
   displayDeleteConfirmationDialog(message: string): Observable<boolean> {
     const dialogRef = this.dialog.open(
       AlertComponent,

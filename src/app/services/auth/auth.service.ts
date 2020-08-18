@@ -4,9 +4,8 @@ import {environment} from '../../../environments/environment';
 import {catchError, tap} from 'rxjs/operators';
 import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {AlertComponent} from '../../components/dialogs/alert/alert.component';
 import {Router} from '@angular/router';
+import {AlertService} from '../alert/alert.service';
 
 interface RegisterParams {
   email: string;
@@ -27,7 +26,7 @@ export class AuthService {
   constructor(
     private httpClient: HttpClient,
     private jwtHelperService: JwtHelperService,
-    private dialog: MatDialog,
+    private alertService: AlertService,
     private router: Router,
   ) {
   }
@@ -79,9 +78,10 @@ export class AuthService {
     console.log('JWT:', token);
   }
 
-  private handleLoginException(error: any): MatDialogRef<AlertComponent> {
+  private handleLoginException(error: any): null {
     this.emptyUsernameAndToken();
-    return this.presentLoginErrorDialog(error);
+    this.presentLoginErrorDialog(error);
+    return null;
   }
 
   private emptyUsernameAndToken(): void {
@@ -90,17 +90,17 @@ export class AuthService {
     this.tokenChange.next(null);
   }
 
-  private presentLoginErrorDialog(error: any): MatDialogRef<AlertComponent> {
+  private presentLoginErrorDialog(error: any): void {
     console.log(error);
     if (!!error?.error?.detail) {
-      return this.openAlertDialog(error.error.title, error.error.detail);
+      this.openAlertDialog(error.error.title, error.error.detail);
     } else {
-      return this.openAlertDialog('Something Went Wrong', 'Please check your internet connection.');
+      this.openAlertDialog('Something Went Wrong', 'Please check your internet connection.');
     }
   }
 
-  private openAlertDialog(title: string, message: string): MatDialogRef<AlertComponent> {
-    return this.dialog.open(AlertComponent, {data: {title, message}});
+  private openAlertDialog(title: string, message: string): void {
+    this.alertService.displaySimpleAlertDialog(title, message);
   }
 
   private navigateToLogin(): Promise<boolean> {
