@@ -49,6 +49,7 @@
                [matChipInputAddOnBlur]="true"
                [matChipInputFor]="chipList"
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [disabled]="!data?.isEdit || !data?.release"
                placeholder="New team member...">
       </mat-chip-list>
     </mat-form-field>
