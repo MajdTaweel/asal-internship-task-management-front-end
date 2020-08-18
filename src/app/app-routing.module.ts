@@ -7,6 +7,8 @@ import {AdminGuard} from './guards/admin/admin.guard';
 import {HomeComponent} from './components/home/home.component';
 import {AuthGuard} from './guards/auth/auth.guard';
 import {AnonymousGuard} from './guards/anonymous/anonymous.guard';
+import {TaskManagementComponent} from './components/task-management/task-management.component';
+import {TaskGuard} from './guards/task/task.guard';
 
 
 const routes: Routes = [
@@ -28,7 +30,12 @@ const routes: Routes = [
   {
     path: 'admin/user-management',
     component: UserManagementComponent,
-    canActivate: [AdminGuard]
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'release/:releaseId/task-management',
+    component: TaskManagementComponent,
+    canActivate: [AuthGuard, TaskGuard],
   },
   {
     path: '**',
