@@ -26,3 +26,34 @@ export enum TaskStatus {
   WAITING_FOR_REVIEW = 'WAITING_FOR_REVIEW',
   DONE = 'DONE'
 }
+
+const NEAR_DUE_MIN_DAYS = 3;
+
+export function isTaskOverdue(task: Task): boolean {
+  if (task.status === TaskStatus.DONE) {
+    return false;
+  }
+  let date = task.deadline;
+  if (!date) {
+    return false;
+  }
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  return (new Date().valueOf()) >= date.valueOf();
+}
+
+export function isTaskNearDue(task: Task): boolean {
+  if (task.status === TaskStatus.DONE) {
+    return false;
+  }
+  let date = task.deadline;
+  if (!date) {
+    return false;
+  }
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  const minDays = NEAR_DUE_MIN_DAYS * 24 * 60 * 60 * 1000;
+  return date.valueOf() - (new Date().valueOf()) <= minDays;
+}

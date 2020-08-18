@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../services/user/user.service';
 import {ReleaseService} from '../../services/release/release.service';
-import {Release} from '../../models/release.model';
+import {isReleaseNearDue, isReleaseOverdue, Release} from '../../models/release.model';
 import {Observable, of, Subscription} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -64,11 +64,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   isOverdue(release: Release): boolean {
-    return this.releaseService.isOverdue(release);
+    return isReleaseOverdue(release);
   }
 
   isAlmostDue(release: Release): boolean {
-    return this.releaseService.isAlmostDue(release);
+    return isReleaseNearDue(release);
   }
 
   ngOnDestroy(): void {

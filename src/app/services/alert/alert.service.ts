@@ -3,8 +3,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AlertComponent} from '../../components/dialogs/alert/alert.component';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {Release} from '../../models/release.model';
-import {ReleaseService} from '../release/release.service';
+import {isReleaseNearDue, isReleaseOverdue, Release} from '../../models/release.model';
 
 interface ReleaseDueAlertContent {
   text: string;
@@ -18,7 +17,7 @@ interface ReleaseDueAlertContent {
 })
 export class AlertService {
 
-  constructor(private dialog: MatDialog, private releaseService: ReleaseService) {
+  constructor(private dialog: MatDialog) {
   }
 
   displaySimpleAlertDialog(title: string, message: string): MatDialogRef<AlertComponent> {
@@ -97,9 +96,9 @@ export class AlertService {
         date: release.deadline,
         days: 0,
       };
-      if (this.releaseService.isOverdue(release)) {
+      if (isReleaseOverdue(release)) {
         contents.push(content);
-      } else if (this.releaseService.isAlmostDue(release)) {
+      } else if (isReleaseNearDue(release)) {
         contents.push({...content, type: 'near'});
       }
       if (typeof content.date === 'string') {

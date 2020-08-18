@@ -25,3 +25,34 @@ export enum ReleaseStatus {
 }
 
 export const RELEASE_STATUSES = [ReleaseStatus.NEW, ReleaseStatus.IN_PROGRESS, ReleaseStatus.DONE];
+
+const NEAR_DUE_MIN_DAYS = 3;
+
+export function isReleaseOverdue(release: Release): boolean {
+  if (release.status === ReleaseStatus.DONE) {
+    return false;
+  }
+  let date = release.deadline;
+  if (!date) {
+    return false;
+  }
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  return (new Date().valueOf()) >= date.valueOf();
+}
+
+export function isReleaseNearDue(release: Release): boolean {
+  if (release.status === ReleaseStatus.DONE) {
+    return false;
+  }
+  let date = release.deadline;
+  if (!date) {
+    return false;
+  }
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  const minDays = NEAR_DUE_MIN_DAYS * 24 * 60 * 60 * 1000;
+  return date.valueOf() - (new Date().valueOf()) <= minDays;
+}

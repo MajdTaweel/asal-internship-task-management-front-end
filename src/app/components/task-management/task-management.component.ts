@@ -8,7 +8,7 @@ import {ReleaseService} from '../../services/release/release.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AlertService} from '../../services/alert/alert.service';
 import {map, switchMap, tap} from 'rxjs/operators';
-import {Task} from '../../models/task.model';
+import {isTaskNearDue, isTaskOverdue, Task} from '../../models/task.model';
 import {TaskService} from '../../services/task/task.service';
 import {TaskEditComponent} from '../dialogs/task-edit/task-edit.component';
 import {ActivatedRoute} from '@angular/router';
@@ -75,11 +75,11 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   }
 
   isOverdue(task: Task): boolean {
-    return this.taskService.isOverdue(task);
+    return isTaskOverdue(task);
   }
 
   isAlmostDue(task: Task): boolean {
-    return this.taskService.isAlmostDue(task);
+    return isTaskNearDue(task);
   }
 
   ngOnDestroy(): void {
