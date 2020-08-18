@@ -62,6 +62,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.checkConfirmationThenDelete(release);
   }
 
+  isOverdue(release: Release): boolean {
+    return this.releaseService.isOverdue(release);
+  }
+
+  isAlmostDue(release: Release): boolean {
+    return this.releaseService.isAlmostDue(release);
+  }
+
   ngOnDestroy(): void {
     if (this.releasesSubscription) {
       this.releasesSubscription.unsubscribe();

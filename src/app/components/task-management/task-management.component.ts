@@ -74,6 +74,14 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
     this.checkConfirmationThenDelete(task);
   }
 
+  isOverdue(task: Task): boolean {
+    return this.taskService.isOverdue(task);
+  }
+
+  isAlmostDue(task: Task): boolean {
+    return this.taskService.isAlmostDue(task);
+  }
+
   ngOnDestroy(): void {
     if (this.tasksSubscription) {
       this.tasksSubscription.unsubscribe();

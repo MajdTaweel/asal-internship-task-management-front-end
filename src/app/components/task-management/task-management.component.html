@@ -17,7 +17,9 @@
       <!-- Deadline Column -->
       <ng-container matColumnDef="deadline">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Deadline</th>
-        <td *matCellDef="let element" mat-cell>{{ element.deadline | date:'mediumDate' }}</td>
+        <td *matCellDef="let element" [class.text-danger]="isOverdue(element)"
+            [class.text-warning]="isAlmostDue(element)"
+            mat-cell>{{ element.deadline | date:'mediumDate' }}</td>
       </ng-container>
 
       <!-- Status Column -->
