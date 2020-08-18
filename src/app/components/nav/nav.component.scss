@@ -4,18 +4,20 @@
 
 #ham {
   display: none;
+  justify-content: center;
 }
 
 #ham-list {
   display: none;
   height: max-content;
+  flex-direction: column;
   align-items: stretch;
 }
 
 @media only screen and (max-width: 768px) {
   #ham,
   #ham-list {
-    display: initial;
+    display: flex;
   }
 
   #nav-links {

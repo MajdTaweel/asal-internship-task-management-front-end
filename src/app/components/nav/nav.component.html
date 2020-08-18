@@ -23,7 +23,7 @@
       <button (click)="onLogOut()" *appHasAnyAuthority="'ROLE_USER'" mat-stroked-button>Log Out</button>
     </span>
   </mat-toolbar-row>
-  <mat-toolbar-row id="ham-list" class="d-flex flex-column" *ngIf="isNavListOpened">
+  <mat-toolbar-row *ngIf="isNavListOpened" id="ham-list">
 
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
 
