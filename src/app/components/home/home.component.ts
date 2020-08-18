@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.releasesSubscription = this.getReleases().subscribe(releases => {
       this.dataSource = new MatTableDataSource(releases);
       this.dataSource.sort = this.sort;
+      this.viewDueDateAlerts(releases);
     });
   }
 
@@ -153,5 +154,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         isEdit,
       },
     });
+  }
+
+  private viewDueDateAlerts(releases: Release[]): void {
+    this.alertService.displayReleasesDuesAlertDialog(releases);
   }
 }
